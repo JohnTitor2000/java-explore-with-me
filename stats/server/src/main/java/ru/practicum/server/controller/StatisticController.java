@@ -7,7 +7,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.HitDto;
 import ru.practicum.dto.StatisticDto;
-import ru.practicum.server.model.Statistic;
 import ru.practicum.server.service.StatisticService;
 
 import javax.validation.Valid;

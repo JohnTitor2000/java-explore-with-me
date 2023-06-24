@@ -2,9 +2,7 @@ package ru.practicum.server.dtoMapper;
 
 import lombok.experimental.UtilityClass;
 import ru.practicum.dto.HitDto;
-import ru.practicum.dto.StatisticDto;
 import ru.practicum.server.model.Hit;
-import ru.practicum.server.model.Statistic;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

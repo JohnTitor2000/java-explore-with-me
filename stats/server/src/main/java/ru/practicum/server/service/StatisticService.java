@@ -1,6 +1,5 @@
 package ru.practicum.server.service;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,7 +13,6 @@ import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static ru.practicum.dto.Constants.FORMAT;
 
@@ -36,11 +34,11 @@ public class StatisticService {
     }
 
     public List<StatisticDto> getStatistic(String start, String end, List<String> uris, Boolean unique) {
-        if(unique) {
+        if (unique) {
             return statisticRepository.getStatisticUnique(LocalDateTime.parse(start, DateTimeFormatter.ofPattern(FORMAT)),
-                LocalDateTime.parse(end, DateTimeFormatter.ofPattern(FORMAT)), uris , uris.isEmpty());
+                LocalDateTime.parse(end, DateTimeFormatter.ofPattern(FORMAT)), uris, uris.isEmpty());
         }
         return statisticRepository.getStatisticNotUnique(LocalDateTime.parse(start, DateTimeFormatter.ofPattern(FORMAT)),
-            LocalDateTime.parse(end, DateTimeFormatter.ofPattern(FORMAT)), uris , uris.isEmpty());
+                LocalDateTime.parse(end, DateTimeFormatter.ofPattern(FORMAT)), uris, uris.isEmpty());
     }
 }

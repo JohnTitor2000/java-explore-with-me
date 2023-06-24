@@ -6,7 +6,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ru.practicum.dto.StatisticDto;
 import ru.practicum.server.model.Hit;
-import ru.practicum.server.model.Statistic;
 
 import java.time.LocalDateTime;
 import java.util.List;
