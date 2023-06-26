@@ -12,7 +12,6 @@ import ru.practicum.server.repository.StatisticRepository;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -39,7 +38,7 @@ public class StatisticService {
         List<String> resultUri = uris == null ? Collections.emptyList() : uris;
         if (unique) {
             return statisticRepository.getStatisticUnique(LocalDateTime.parse(start, DateTimeFormatter.ofPattern(FORMAT)),
-                LocalDateTime.parse(end, DateTimeFormatter.ofPattern(FORMAT)), resultUri , resultUri.isEmpty());
+                LocalDateTime.parse(end, DateTimeFormatter.ofPattern(FORMAT)), resultUri, resultUri.isEmpty());
         }
         return statisticRepository.getStatisticNotUnique(LocalDateTime.parse(start, DateTimeFormatter.ofPattern(FORMAT)),
                 LocalDateTime.parse(end, DateTimeFormatter.ofPattern(FORMAT)), resultUri, resultUri.isEmpty());
