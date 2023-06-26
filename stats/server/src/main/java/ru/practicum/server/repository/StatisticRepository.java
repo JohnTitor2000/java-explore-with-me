@@ -12,7 +12,7 @@ import java.util.List;
 
 @Repository
 public interface StatisticRepository extends JpaRepository<Hit, Long> {
-    @Query("SELECT new ru.practicum.dto.StatisticDto(hit.app, hit.uri, COUNT(DISTINCT hit.ip)) " +
+    @Query("SELECT new ru.practicum.dto.StatisticDto(hit.app, hit.uri, COUNT(DISTINCT hit.ip) AS hitCount) " +
             "FROM Hit as hit " +
             "WHERE hit.timeStamp between :start and :end " +
             "AND (:isEmpty = true OR hit.uri IN (:uris)) " +
@@ -23,7 +23,7 @@ public interface StatisticRepository extends JpaRepository<Hit, Long> {
                                           @Param("uris") List<String> uris,
                                           @Param("isEmpty") Boolean isEmpty);
 
-    @Query("SELECT new ru.practicum.dto.StatisticDto(hit.app, hit.uri, COUNT(hit.ip)) " +
+    @Query("SELECT new ru.practicum.dto.StatisticDto(hit.app, hit.uri, COUNT(hit.ip) AS hitCount) " +
             "FROM Hit as hit " +
             "WHERE hit.timeStamp BETWEEN :start AND :end " +
             "AND (:isEmpty = true OR hit.uri IN (:uris)) " +

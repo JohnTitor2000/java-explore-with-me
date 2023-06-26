@@ -32,7 +32,7 @@ public class StatisticController {
     @ResponseStatus(HttpStatus.CREATED)
     HitDto addHit(@RequestBody @Valid HitDto hitDto) {
         log.info("Static Controller get hit with app = {}, ip = {}, uri = {}, timestamp = {}",
-                hitDto.getApp(), hitDto.getIp(), hitDto.getUri(), hitDto.getTimeStamp());
+                hitDto.getApp(), hitDto.getIp(), hitDto.getUri(), hitDto.getTimestamp());
         return statisticService.addHit(hitDto);
     }
 

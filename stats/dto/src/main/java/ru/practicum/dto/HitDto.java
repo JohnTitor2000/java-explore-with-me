@@ -19,5 +19,5 @@ public class HitDto {
     @NotNull
     String ip;
     @NotNull
-    String timeStamp;
+    String timestamp;
 }

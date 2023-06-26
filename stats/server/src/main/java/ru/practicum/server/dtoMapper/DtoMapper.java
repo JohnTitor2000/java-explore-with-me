@@ -16,7 +16,7 @@ public class DtoMapper {
         hit.setApp(hitDto.getApp());
         hit.setIp(hitDto.getIp());
         hit.setUri(hitDto.getUri());
-        hit.setTimeStamp(LocalDateTime.parse(hitDto.getTimeStamp(), DateTimeFormatter.ofPattern(FORMAT)));
+        hit.setTimeStamp(LocalDateTime.parse(hitDto.getTimestamp(), DateTimeFormatter.ofPattern(FORMAT)));
         return hit;
     }
 
