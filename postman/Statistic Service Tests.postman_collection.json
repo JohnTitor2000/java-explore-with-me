@@ -1,0 +1,471 @@
+{
+	"info": {
+		"_postman_id": "420065f4-6cd1-47c4-946c-8991d49b51fe",
+		"name": "Statistic Service Tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25457922"
+	},
+	"item": [
+		{
+			"name": "Добавление hit",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function() {\r",
+							"    pm.response.to.be.success ; // код ответа должен быть равен 200 OK\r",
+							"    pm.response.to.be.withBody; // ответ должен содержать тело\r",
+							"    pm.response.to.be.json; // и тело ответа должно быть в формате JSON\r",
+							"}); \r",
+							"pm.test(\"Проверка наличия поля 'app'\", function() {\r",
+							"    pm.response.to.have.jsonBody('app');\r",
+							"});\r",
+							"pm.test(\"Проверка значения поля 'app'\", function() {\r",
+							"    pm.expect(pm.response.json().app).to.eql('ewm-main-service');\r",
+							"});\r",
+							"pm.test(\"Проверка наличия поля 'uri'\", function() {\r",
+							"    pm.response.to.have.jsonBody('uri');\r",
+							"});\r",
+							"pm.test(\"Проверка значения поля 'uri'\", function() {\r",
+							"    pm.expect(pm.response.json().uri).to.eql('/events/1');\r",
+							"});\r",
+							"pm.test(\"Проверка наличия поля 'ip'\", function() {\r",
+							"    pm.response.to.have.jsonBody('ip');\r",
+							"});\r",
+							"pm.test(\"Проверка значения поля 'ip'\", function() {\r",
+							"    pm.expect(pm.response.json().ip).to.eql('192.163.0.1');\r",
+							"});\r",
+							"pm.test(\"Проверка наличия поля 'timestamp'\", function() {\r",
+							"    pm.response.to.have.jsonBody('timestamp');\r",
+							"});\r",
+							"pm.test(\"Проверка значения поля 'timestamp'\", function() {\r",
+							"    pm.expect(pm.response.json().timestamp).to.eql('2022-09-06T11:00:23');\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"app\": \"ewm-main-service\",\r\n  \"uri\": \"/events/1\",\r\n  \"ip\": \"192.163.0.1\",\r\n  \"timestamp\": \"2022-09-06 11:00:23\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9090/hit",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"hit"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Добавить hit с тем же ip",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function() {\r",
+							"    pm.response.to.be.success ; // код ответа должен быть равен 200 OK\r",
+							"    pm.response.to.be.withBody; // ответ должен содержать тело\r",
+							"    pm.response.to.be.json; // и тело ответа должно быть в формате JSON\r",
+							"}); \r",
+							"pm.test(\"Проверка наличия поля 'app'\", function() {\r",
+							"    pm.response.to.have.jsonBody('app');\r",
+							"});\r",
+							"pm.test(\"Проверка значения поля 'app'\", function() {\r",
+							"    pm.expect(pm.response.json().app).to.eql('ewm-main-service');\r",
+							"});\r",
+							"pm.test(\"Проверка наличия поля 'uri'\", function() {\r",
+							"    pm.response.to.have.jsonBody('uri');\r",
+							"});\r",
+							"pm.test(\"Проверка значения поля 'uri'\", function() {\r",
+							"    pm.expect(pm.response.json().uri).to.eql('/events/2');\r",
+							"});\r",
+							"pm.test(\"Проверка наличия поля 'ip'\", function() {\r",
+							"    pm.response.to.have.jsonBody('ip');\r",
+							"});\r",
+							"pm.test(\"Проверка значения поля 'ip'\", function() {\r",
+							"    pm.expect(pm.response.json().ip).to.eql('192.163.0.1');\r",
+							"});\r",
+							"pm.test(\"Проверка наличия поля 'timestamp'\", function() {\r",
+							"    pm.response.to.have.jsonBody('timestamp');\r",
+							"});\r",
+							"pm.test(\"Проверка значения поля 'timestamp'\", function() {\r",
+							"    pm.expect(pm.response.json().timestamp).to.eql('2022-09-06T13:00:23');\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"app\": \"ewm-main-service\",\r\n  \"uri\": \"/events/2\",\r\n  \"ip\": \"192.163.0.1\",\r\n  \"timestamp\": \"2022-09-06 13:00:23\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9090/hit",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"hit"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Добавить hit с другим ip",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function() {\r",
+							"    pm.response.to.be.success ; // код ответа должен быть равен 200 OK\r",
+							"    pm.response.to.be.withBody; // ответ должен содержать тело\r",
+							"    pm.response.to.be.json; // и тело ответа должно быть в формате JSON\r",
+							"}); \r",
+							"pm.test(\"Проверка наличия поля 'app'\", function() {\r",
+							"    pm.response.to.have.jsonBody('app');\r",
+							"});\r",
+							"pm.test(\"Проверка значения поля 'app'\", function() {\r",
+							"    pm.expect(pm.response.json().app).to.eql('ewm-main-service');\r",
+							"});\r",
+							"pm.test(\"Проверка наличия поля 'uri'\", function() {\r",
+							"    pm.response.to.have.jsonBody('uri');\r",
+							"});\r",
+							"pm.test(\"Проверка значения поля 'uri'\", function() {\r",
+							"    pm.expect(pm.response.json().uri).to.eql('/events/2');\r",
+							"});\r",
+							"pm.test(\"Проверка наличия поля 'ip'\", function() {\r",
+							"    pm.response.to.have.jsonBody('ip');\r",
+							"});\r",
+							"pm.test(\"Проверка значения поля 'ip'\", function() {\r",
+							"    pm.expect(pm.response.json().ip).to.eql('192.163.0.3');\r",
+							"});\r",
+							"pm.test(\"Проверка наличия поля 'timestamp'\", function() {\r",
+							"    pm.response.to.have.jsonBody('timestamp');\r",
+							"});\r",
+							"pm.test(\"Проверка значения поля 'timestamp'\", function() {\r",
+							"    pm.expect(pm.response.json().timestamp).to.eql('2022-09-06T13:00:23');\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"app\": \"ewm-main-service\",\r\n  \"uri\": \"/events/2\",\r\n  \"ip\": \"192.163.0.3\",\r\n  \"timestamp\": \"2022-09-06 13:00:23\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9090/hit",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"hit"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Добавить неуникальный hit",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Неуникальная статистика без uri",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Проверка количества объектов в массиве\", function() {\r",
+							"    var responseJson = pm.response.json();\r",
+							"    pm.expect(responseJson).to.be.an('array');\r",
+							"    pm.expect(responseJson.length).to.eql(2);\r",
+							"});\r",
+							"pm.test(\"Проверка первого объекта\", function() {\r",
+							"    var responseJson = pm.response.json();\r",
+							"    pm.expect(responseJson[0]).to.be.an('object');\r",
+							"    pm.expect(responseJson[0]).to.have.property('app', 'ewm-main-service');\r",
+							"    pm.expect(responseJson[0]).to.have.property('uri', '/events/2');\r",
+							"    pm.expect(responseJson[0]).to.have.property('hits', 3);\r",
+							"});\r",
+							"pm.test(\"Проверка второго объекта\", function() {\r",
+							"    var responseJson = pm.response.json();\r",
+							"    pm.expect(responseJson[1]).to.be.an('object');\r",
+							"    pm.expect(responseJson[1]).to.have.property('app', 'ewm-main-service');\r",
+							"    pm.expect(responseJson[1]).to.have.property('uri', '/events/1');\r",
+							"    pm.expect(responseJson[1]).to.have.property('hits', 1);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:9090/stats?start=2022-08-06 13:00:23&end=2022-10-06 13:00:23&unique=false",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"stats"
+					],
+					"query": [
+						{
+							"key": "start",
+							"value": "2022-08-06 13:00:23"
+						},
+						{
+							"key": "end",
+							"value": "2022-10-06 13:00:23"
+						},
+						{
+							"key": "unique",
+							"value": "false"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Уникальная статистика без url",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Проверка количества объектов в массиве\", function() {\r",
+							"    var responseJson = pm.response.json();\r",
+							"    pm.expect(responseJson).to.be.an('array');\r",
+							"    pm.expect(responseJson.length).to.eql(2);\r",
+							"});\r",
+							"pm.test(\"Проверка первого объекта\", function() {\r",
+							"    var responseJson = pm.response.json();\r",
+							"    pm.expect(responseJson[0]).to.be.an('object');\r",
+							"    pm.expect(responseJson[0]).to.have.property('app', 'ewm-main-service');\r",
+							"    pm.expect(responseJson[0]).to.have.property('uri', '/events/2');\r",
+							"    pm.expect(responseJson[0]).to.have.property('hits', 2);\r",
+							"});\r",
+							"pm.test(\"Проверка второго объекта\", function() {\r",
+							"    var responseJson = pm.response.json();\r",
+							"    pm.expect(responseJson[1]).to.be.an('object');\r",
+							"    pm.expect(responseJson[1]).to.have.property('app', 'ewm-main-service');\r",
+							"    pm.expect(responseJson[1]).to.have.property('uri', '/events/1');\r",
+							"    pm.expect(responseJson[1]).to.have.property('hits', 1);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:9090/stats?start=2022-08-06 13:00:23&end=2022-10-06 13:00:23&unique=true",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"stats"
+					],
+					"query": [
+						{
+							"key": "start",
+							"value": "2022-08-06 13:00:23"
+						},
+						{
+							"key": "end",
+							"value": "2022-10-06 13:00:23"
+						},
+						{
+							"key": "unique",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Уникальная статистика с url",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Проверка количества объектов в массиве\", function() {\r",
+							"    var responseJson = pm.response.json();\r",
+							"    pm.expect(responseJson).to.be.an('array');\r",
+							"    pm.expect(responseJson.length).to.eql(1);\r",
+							"});\r",
+							"pm.test(\"Проверка первого объекта\", function() {\r",
+							"    var responseJson = pm.response.json();\r",
+							"    pm.expect(responseJson[0]).to.be.an('object');\r",
+							"    pm.expect(responseJson[0]).to.have.property('app', 'ewm-main-service');\r",
+							"    pm.expect(responseJson[0]).to.have.property('uri', '/events/2');\r",
+							"    pm.expect(responseJson[0]).to.have.property('hits', 2);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:9090/stats?start=2022-08-06 13:00:23&end=2022-10-06 13:00:23&unique=true&uris=/events/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"stats"
+					],
+					"query": [
+						{
+							"key": "start",
+							"value": "2022-08-06 13:00:23"
+						},
+						{
+							"key": "end",
+							"value": "2022-10-06 13:00:23"
+						},
+						{
+							"key": "unique",
+							"value": "true"
+						},
+						{
+							"key": "uris",
+							"value": "/events/2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Неуникальная статистика с url",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Проверка количества объектов в массиве\", function() {\r",
+							"    var responseJson = pm.response.json();\r",
+							"    pm.expect(responseJson).to.be.an('array');\r",
+							"    pm.expect(responseJson.length).to.eql(1);\r",
+							"});\r",
+							"pm.test(\"Проверка первого объекта\", function() {\r",
+							"    var responseJson = pm.response.json();\r",
+							"    pm.expect(responseJson[0]).to.be.an('object');\r",
+							"    pm.expect(responseJson[0]).to.have.property('app', 'ewm-main-service');\r",
+							"    pm.expect(responseJson[0]).to.have.property('uri', '/events/2');\r",
+							"    pm.expect(responseJson[0]).to.have.property('hits', 3);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:9090/stats?start=2022-08-06 13:00:23&end=2022-10-06 13:00:23&unique=false&uris=/events/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"stats"
+					],
+					"query": [
+						{
+							"key": "start",
+							"value": "2022-08-06 13:00:23"
+						},
+						{
+							"key": "end",
+							"value": "2022-10-06 13:00:23"
+						},
+						{
+							"key": "unique",
+							"value": "false"
+						},
+						{
+							"key": "uris",
+							"value": "/events/2"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
