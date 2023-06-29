@@ -4,17 +4,19 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.ReadOnlyProperty;
 
+import javax.validation.constraints.Size;
+
 import javax.persistence.*;
 
+@Entity
 @Getter
 @Setter
-@Entity
-@Table(name = "users")
-public class User {
+@Table(name = "categories")
+public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @ReadOnlyProperty
-    private Long id;
-    private String name;
-    private String email;
+    Long id;
+    @Size(min = 1, max = 50)
+    String name;
 }

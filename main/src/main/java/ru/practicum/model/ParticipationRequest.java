@@ -9,12 +9,14 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Entity
-@Table(name = "users")
-public class User {
+@Table(name = "participation_request")
+public class ParticipationRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @ReadOnlyProperty
-    private Long id;
-    private String name;
-    private String email;
+    Long id;
+    String created;
+    Long event;
+    Long requester;
+    Status status;
 }
