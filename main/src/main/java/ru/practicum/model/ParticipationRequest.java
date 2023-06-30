@@ -14,9 +14,13 @@ public class ParticipationRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @ReadOnlyProperty
-    Long id;
-    String created;
-    Long event;
-    Long requester;
-    Status status;
+    private Long id;
+    private String created;
+    @ManyToOne
+    @JoinColumn(name = "event_id")
+    private Event event;
+    @OneToOne
+    @JoinColumn(name = "requester_id")
+    private User requester;
+    private Status status;
 }

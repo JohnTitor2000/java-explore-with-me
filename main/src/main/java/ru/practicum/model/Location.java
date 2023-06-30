@@ -1,6 +1,6 @@
 package ru.practicum.model;
 
 public class Location {
-    float lat;
-    float lon;
+    private float lat;
+    private float lon;
 }

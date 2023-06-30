@@ -16,7 +16,7 @@ public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @ReadOnlyProperty
-    Long id;
+    private Long id;
     @Size(min = 1, max = 50)
-    String name;
+    private String name;
 }

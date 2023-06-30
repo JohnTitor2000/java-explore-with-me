@@ -3,8 +3,10 @@ package ru.practicum.service;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.practicum.dto.RequestOutputDto;
 import ru.practicum.dto.ShortUser;
 import ru.practicum.exception.NotFoundException;
+import ru.practicum.mappers.RequestMapper;
 import ru.practicum.mappers.UserMapper;
 import ru.practicum.model.ParticipationRequest;
 import ru.practicum.model.Status;
@@ -46,19 +48,5 @@ public class UserService {
         } else {
             return  userRepository.findAllByIdIn(ids);
         }
-    }
-
-    public ParticipationRequest addRequest(Long userId, Long eventId) {
-        if (!eventRepository.existsById(eventId)) {
-            throw new NotFoundException("Event with id=" + eventId + " was not found");
-        } else if (!userRepository.existsById(userId)) {
-            throw new NotFoundException("User with id=" + userId + " was not found");
-        }
-        ParticipationRequest pRequest = new ParticipationRequest();
-        pRequest.setRequester(userId);
-        pRequest.setEvent(eventId);
-        pRequest.setCreated(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-        pRequest.setStatus(Status.PENDING);
-        return prRepository.save(pRequest);
     }
 }

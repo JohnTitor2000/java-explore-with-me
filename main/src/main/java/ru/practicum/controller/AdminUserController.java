@@ -13,7 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/admin/users")
 @AllArgsConstructor(onConstructor = @__(@Autowired))
-public class UserController {
+public class AdminUserController {
     private final UserService userService;
 
     @GetMapping
