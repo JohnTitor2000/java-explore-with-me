@@ -22,7 +22,7 @@ public class RequestController {
         return requestService.addRequest(userId, eventId);
     }
 
-    @PostMapping
+    @GetMapping
     @ResponseStatus(HttpStatus.ACCEPTED)
     public List<RequestOutputDto> getRequests(@PathVariable Long userId) {
         return requestService.getRequests(userId);

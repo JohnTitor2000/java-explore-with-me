@@ -38,7 +38,7 @@ public class RequestService {
         if (!userRepository.existsById(userId)) {
             throw new NotFoundException("User with id=" + userId + " was not found");
         }
-        return prRepository.findByUserId(userId).stream().map(RequestMapper::toRequestOutputDto).collect(Collectors.toList());
+        return prRepository.findByRequesterId(userId).stream().map(RequestMapper::toRequestOutputDto).collect(Collectors.toList());
     }
 
     public RequestOutputDto cancelRequest(Long userId, Long requestId) {

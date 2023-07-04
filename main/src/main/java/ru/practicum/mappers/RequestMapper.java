@@ -15,7 +15,7 @@ public class RequestMapper {
 
     public ParticipationRequest toParticipationRequest(User user, Event event) {
         ParticipationRequest participationRequest = new ParticipationRequest();
-        participationRequest.setCreated(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        participationRequest.setCreated(LocalDateTime.now());
         participationRequest.setStatus(Status.PENDING);
         participationRequest.setRequester(user);
         participationRequest.setEvent(event);

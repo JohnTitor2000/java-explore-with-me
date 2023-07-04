@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import ru.practicum.exception.ConflictExeption;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.model.ErrorResponse;
 
@@ -29,6 +30,17 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setStatus(HttpStatus.CONFLICT);
         errorResponse.setReason("Integrity constraint has been violated.");
+        errorResponse.setMessage(ex.getMessage());
+        errorResponse.setTimestamp(LocalDateTime.now());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT );
+    }
+
+    @ExceptionHandler(ConflictExeption.class)
+    public ResponseEntity<ErrorResponse> handleConflictException(Exception ex) {
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setStatus(HttpStatus.CONFLICT);
+        errorResponse.setReason("For the requested operation the conditions are not met.");
         errorResponse.setMessage(ex.getMessage());
         errorResponse.setTimestamp(LocalDateTime.now());
 
