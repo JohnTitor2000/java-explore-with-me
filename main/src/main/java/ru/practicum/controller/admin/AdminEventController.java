@@ -1,6 +1,7 @@
 package ru.practicum.controller.admin;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import ru.practicum.service.EventService;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/admin/events")
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -31,7 +33,8 @@ public class AdminEventController {
     }
 
     @PatchMapping("/{eventId}")
-    public EventDataDto updateEvent(@PathVariable Long eventId, @RequestBody InputUpdateEventDto inputUpdateEventDto) {
+    public FullEventDto updateEvent(@PathVariable Long eventId, @RequestBody InputUpdateEventDto inputUpdateEventDto) {
+        log.info("AdminEventController get request with eventId = {}, inputUpdateEventDto = {}", eventId, inputUpdateEventDto);
         return eventService.updateEvent(inputUpdateEventDto, eventId);
     }
 }

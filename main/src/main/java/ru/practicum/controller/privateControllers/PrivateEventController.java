@@ -1,16 +1,23 @@
 package ru.practicum.controller.privateControllers;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.*;
 import ru.practicum.service.EventService;
 
+import javax.validation.Valid;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/users/{userId}/events")
 @AllArgsConstructor(onConstructor = @__(@Autowired))
+@Validated
 public class PrivateEventController {
 
     EventService eventService;
@@ -23,7 +30,8 @@ public class PrivateEventController {
     }
 
     @PostMapping
-    public EventDataDto createEvent(@PathVariable Long userId, @RequestBody InputNewEventDto inputNewEventDto) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public EventDataDto createEvent(@PathVariable @PositiveOrZero Long userId, @Valid @RequestBody InputNewEventDto inputNewEventDto) {
         return eventService.createEvent(userId, inputNewEventDto);
     }
 

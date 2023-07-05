@@ -51,6 +51,7 @@ public class EventMapper {
         fullEventDto.setState(event.getState());
         fullEventDto.setViews(event.getViews());
         fullEventDto.setConfirmedRequests(confirmedRequests);
+        fullEventDto.setLocation(event.getLocation());
         return fullEventDto;
     }
 

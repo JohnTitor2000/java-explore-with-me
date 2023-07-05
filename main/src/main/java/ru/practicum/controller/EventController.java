@@ -40,8 +40,8 @@ public class EventController {
     }
 
     @GetMapping("/{id}")
-    public FullEventDto getEventById(@PathVariable Long id) {
-        return eventService.getEventById(id);
+    public FullEventDto getEventById(@PathVariable Long id, HttpServletRequest httpServletRequest) {
+        return eventService.getEventById(id, httpServletRequest);
     }
 
 

@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 import ru.practicum.model.Category;
+import ru.practicum.model.Location;
 import ru.practicum.model.State;
 import ru.practicum.model.User;
 
@@ -30,4 +31,5 @@ public class FullEventDto {
     private State state;
     private Long views;
     private Integer confirmedRequests;
+    private Location location;
 }

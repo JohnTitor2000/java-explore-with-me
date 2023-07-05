@@ -24,7 +24,7 @@ public class StatisticService {
     void setStatistic(List<Event> events) {
         List<String> uris = events.stream().map(EventMapper::toUri).collect(Collectors.toList());
         LocalDateTime now = LocalDateTime.now();
-        List<StatisticDto> statisticsDto = statClient.getStatistic(LocalDateTime.now().minusYears(2).format(dtFormatter), now.format(dtFormatter), uris, false);
+        List<StatisticDto> statisticsDto = statClient.getStatistic(LocalDateTime.now().minusYears(2).format(dtFormatter), now.format(dtFormatter), uris, true);
         for(StatisticDto statisticDto : statisticsDto) {
             Long id = Long.parseLong(String.valueOf(statisticDto.getUri().charAt(statisticDto.getUri().length() - 1)));
             events.stream().filter(o -> o.getId().equals(id)).findFirst().get().setViews(statisticDto.getHits());
@@ -34,8 +34,12 @@ public class StatisticService {
     void setStatistic(Event event) {
         String uris = EventMapper.toUri(event);
         LocalDateTime now = LocalDateTime.now();
-        List<StatisticDto> statisticsDto = statClient.getStatistic(LocalDateTime.now().minusYears(2).format(dtFormatter), now.format(dtFormatter), Collections.singletonList(uris), false);
-        event.setViews(statisticsDto.get(0).getHits());
+        List<StatisticDto> statisticsDto = statClient.getStatistic(LocalDateTime.now().minusYears(2).format(dtFormatter), now.format(dtFormatter), Collections.singletonList(uris), true);
+        if(statisticsDto.isEmpty()) {
+            event.setViews(0L);
+        } else {
+            event.setViews(statisticsDto.get(0).getHits());
+        }
     }
 
     void addHit(String uri, String app, HttpServletRequest httpServletRequest) {

@@ -6,17 +6,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.dto.*;
-import ru.practicum.exception.BadRequest;
 import ru.practicum.exception.BadRequestException;
 import ru.practicum.exception.ConflictExeption;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.mappers.EventMapper;
 import ru.practicum.mappers.RequestMapper;
 import ru.practicum.model.*;
-import ru.practicum.repository.CategoryRepository;
-import ru.practicum.repository.EventRepository;
-import ru.practicum.repository.ParticipationRequestRepository;
-import ru.practicum.repository.UserRepository;
+import ru.practicum.repository.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
@@ -34,13 +30,14 @@ public class EventService {
     private final StatisticService statisticService;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
+    private LocationRepository locationRepository;
 
     public List<EventDataDto> getEvents(String text, List<Long> categories, Boolean paid, LocalDateTime rangeStart,
                                  LocalDateTime rangeEnd, Boolean onlyAvailable, String sort, Integer from,
                                  Integer size, HttpServletRequest httpServletRequest) {
         if (rangeStart != null && rangeEnd != null) {
             if (rangeStart.isAfter(rangeEnd) || rangeEnd.isBefore(LocalDateTime.now())) {
-                throw new BadRequest("Начало и окончание события должны быть в правильном хронологическом порядке.");
+                throw new BadRequestException("Начало и окончание события должны быть в правильном хронологическом порядке.");
             }
         }
         List<Event> events;
@@ -63,9 +60,13 @@ public class EventService {
         return events.stream().map(o -> EventMapper.toEventDataDto(o, participationRequestRepository.getConfirmedRequestsByEventId(o.getId()))).collect(Collectors.toList());
     }
 
-    public FullEventDto getEventById(Long id) {
+    public FullEventDto getEventById(Long id, HttpServletRequest httpServletRequest) {
         Event event = eventRepository.findById(id).orElseThrow(() -> new NotFoundException("Event with id=" + id + " was not found"));
+        if (!event.getState().equals(State.PUBLISHED)) {
+            throw new NotFoundException("Event with id=" + id + " was not found");
+        }
         statisticService.setStatistic(event);
+        statisticService.addHit(EventMapper.toUri(event), "ewm-main-service", httpServletRequest);
         return EventMapper.toFullEventDto(event, participationRequestRepository.getConfirmedRequestsByEventId(id));
     }
 
@@ -78,32 +79,53 @@ public class EventService {
         return events.stream().map(o -> EventMapper.toFullEventDto(o, participationRequestRepository.getConfirmedRequestsByEventId(o.getId()))).collect(Collectors.toList());
     }
 
-    public EventDataDto updateEvent(InputUpdateEventDto event, Long eventId) {
+    public FullEventDto updateEvent(InputUpdateEventDto event, Long eventId) {
         Event modifiedEvent = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
-        if(LocalDateTime.now().plusHours(1).isAfter(modifiedEvent.getEventDate())) {
-            throw new ConflictExeption("Cannot publish the event because it's not in the right state: PUBLISHED");
-        }
-        if(!modifiedEvent.getState().equals(State.PENDING)) {
-            throw new ConflictExeption("Cannot publish the event because it's not in the right state: " + modifiedEvent.getState());
-        }
-        if (event.getTitle() != null) modifiedEvent.setTitle(event.getTitle());
-        if (event.getAnnotation() != null) modifiedEvent.setAnnotation(event.getAnnotation());
-        if (event.getRequestModeration() != null) modifiedEvent.setRequestModeration(event.getRequestModeration());
-        if (event.getCategory() != null) modifiedEvent.setCategory(categoryRepository.findById(event.getCategory()).
-                orElseThrow(() -> new NotFoundException("category with id=" + event.getCategory() + " not found")));
-        if (event.getDescription() != null) modifiedEvent.setDescription(event.getDescription());
-        if (event.getLocation() != null) modifiedEvent.setLocation(event.getLocation());
-        if (event.getParticipantLimit() != null) modifiedEvent.setParticipantLimit(event.getParticipantLimit());
-        if (event.getEventDate() != null) modifiedEvent.setEventDate(event.getEventDate());
-        if (event.getPaid() != null) modifiedEvent.setPaid(event.getPaid());
-        if (event.getStateAction() != null) {
-            if (event.getStateAction().equals("PUBLISH_EVENT")) {
-                modifiedEvent.setState(State.PUBLISHED);
-            } else {
-                modifiedEvent.setState(State.CANCELED);
+        if (event.getStateAction() != null && event.getStateAction().equals("PUBLISH_EVENT")) {
+            if (modifiedEvent.getState() != State.PENDING) {
+                throw new ConflictExeption("Не возможно опубликовать событие с ИД: " + eventId);
             }
+            LocalDateTime published = LocalDateTime.now();
+            modifiedEvent.setPublishedOn(published);
+            modifiedEvent.setState(State.PUBLISHED);
         }
-        return EventMapper.toEventDataDto(eventRepository.save(modifiedEvent), participationRequestRepository.getConfirmedRequestsByEventId(eventId));
+
+        if (event.getStateAction() != null && event.getStateAction().equals("REJECT_EVENT")) {
+            if (modifiedEvent.getState() == State.PUBLISHED && modifiedEvent.getPublishedOn().isBefore(LocalDateTime.now())) {
+                throw new ConflictExeption("Не возможно опубликовать событие с ИД: " + eventId);
+            }
+            modifiedEvent.setState(State.CANCELED);
+        }
+        if (event.getTitle() != null) {
+            modifiedEvent.setTitle(event.getTitle());
+        }
+        if (event.getAnnotation() != null) {
+            modifiedEvent.setAnnotation(event.getAnnotation());
+        }
+        if (event.getRequestModeration() != null) {
+            modifiedEvent.setRequestModeration(event.getRequestModeration());
+        }
+
+        if (event.getCategory() != null) {
+            modifiedEvent.setCategory(categoryRepository.findById(event.getCategory()).
+                orElseThrow(() -> new NotFoundException("category with id=" + event.getCategory() + " not found")));
+        }
+        if (event.getDescription() != null) {
+            modifiedEvent.setDescription(event.getDescription());
+        }
+        if (event.getParticipantLimit() != null) {
+            modifiedEvent.setParticipantLimit(event.getParticipantLimit());
+        }
+        if (event.getEventDate() != null) {
+            if (event.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
+                throw new BadRequestException("Не верная дата события");
+            }
+            modifiedEvent.setEventDate(event.getEventDate());
+        }
+        if (event.getPaid() != null) {
+            modifiedEvent.setPaid(event.getPaid());
+        }
+        return EventMapper.toFullEventDto(eventRepository.save(modifiedEvent), participationRequestRepository.getConfirmedRequestsByEventId(eventId));
     }
 
     public List<EventDataDto> getEventsByUser(Long userId, Integer from, Integer size) {
@@ -117,10 +139,14 @@ public class EventService {
     }
 
     public EventDataDto createEvent(Long userId, InputNewEventDto inputNewEventDto) {
+        if (inputNewEventDto.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
+            throw new BadRequestException("дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента.");
+        }
         Event event = EventMapper.toEvent(inputNewEventDto, categoryRepository.findById(inputNewEventDto.getCategory()).get(),
                                         userRepository.findById(userId).get());
+        locationRepository.save(event.getLocation());
         Event createdEvent = eventRepository.save(event);
-        statisticService.setStatistic(event);
+        event.setViews(0L);
         return EventMapper.toEventDataDto(createdEvent, participationRequestRepository.getConfirmedRequestsByEventId(createdEvent.getId()));
     }
 
@@ -138,26 +164,27 @@ public class EventService {
         if (!modifiedEvent.getInitiator().getId().equals(userId)) {
             throw new NotFoundException("Event with id=" + eventId + " was not found");
         }
-        if(LocalDateTime.now().plusHours(2).isAfter(modifiedEvent.getEventDate())) {
-            throw new ConflictExeption("Cannot publish the event because it's not in the right state: PUBLISHED");
+        if (modifiedEvent.getState().equals(State.PUBLISHED)) {
+            throw new ConflictExeption("Изменить можно только отмененные события или события в состоянии ожидания модерации");
         }
-        if(modifiedEvent.getState().equals(State.PUBLISHED)) {
-            throw new BadRequest("Only pending or canceled events can be changed");
+        if (inputUpdateEventFromUserDto.getEventDate() != null) {
+            if (inputUpdateEventFromUserDto.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
+                throw new BadRequestException("Дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента");
+            }
         }
+        if (inputUpdateEventFromUserDto.getStateAction().equals("SEND_TO_REVIEW")) modifiedEvent.setState(State.PENDING);
+        if (inputUpdateEventFromUserDto.getStateAction().equals("CANCEL_REVIEW")) modifiedEvent.setState(State.CANCELED);
         if (inputUpdateEventFromUserDto.getTitle() != null) modifiedEvent.setTitle(inputUpdateEventFromUserDto.getTitle());
         if (inputUpdateEventFromUserDto.getAnnotation() != null) modifiedEvent.setAnnotation(inputUpdateEventFromUserDto.getAnnotation());
         if (inputUpdateEventFromUserDto.getRequestModeration() != null) modifiedEvent.setRequestModeration(inputUpdateEventFromUserDto.getRequestModeration());
         if (inputUpdateEventFromUserDto.getCategory() != null) modifiedEvent.setCategory(categoryRepository.findById(inputUpdateEventFromUserDto.getCategory()).
                 orElseThrow(() -> new NotFoundException("category with id=" + inputUpdateEventFromUserDto.getCategory() + " not found")));
-        if (inputUpdateEventFromUserDto.getDescription() != null) modifiedEvent.setDescription(inputUpdateEventFromUserDto.getDescription());
+        if (inputUpdateEventFromUserDto.getDescription() != null && !inputUpdateEventFromUserDto.getDescription().isBlank()) modifiedEvent.setDescription(inputUpdateEventFromUserDto.getDescription());
         if (inputUpdateEventFromUserDto.getLocation() != null) modifiedEvent.setLocation(inputUpdateEventFromUserDto.getLocation());
         if (inputUpdateEventFromUserDto.getParticipantLimit() != null) modifiedEvent.setParticipantLimit(inputUpdateEventFromUserDto.getParticipantLimit());
-        if (inputUpdateEventFromUserDto.getEventDate() != null) modifiedEvent.setEventDate(inputUpdateEventFromUserDto.getEventDate());
         if (inputUpdateEventFromUserDto.getPaid() != null) modifiedEvent.setPaid(inputUpdateEventFromUserDto.getPaid());
-        if (inputUpdateEventFromUserDto.getStateAction().equals("CANCEL_REVIEW")) {
-            modifiedEvent.setState(State.PENDING);
-        }
-        return EventMapper.toFullEventDto(eventRepository.save(modifiedEvent), participationRequestRepository.getConfirmedRequestsByEventId(eventId));
+        eventRepository.save(modifiedEvent);
+        return EventMapper.toFullEventDto(modifiedEvent, participationRequestRepository.getConfirmedRequestsByEventId(eventId));
     }
 
 
@@ -177,6 +204,7 @@ public class EventService {
             }
         }
         prs.forEach(o -> o.setStatus(Status.statusFromString(confirmRequestDto.getStatus())));
+        prs.stream().forEach(participationRequestRepository::save);
         return prs.stream().map(RequestMapper::toRequestOutputDto).collect(Collectors.toList());
     }
 }

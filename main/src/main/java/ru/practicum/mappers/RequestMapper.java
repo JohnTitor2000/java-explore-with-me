@@ -16,7 +16,11 @@ public class RequestMapper {
     public ParticipationRequest toParticipationRequest(User user, Event event) {
         ParticipationRequest participationRequest = new ParticipationRequest();
         participationRequest.setCreated(LocalDateTime.now());
-        participationRequest.setStatus(Status.PENDING);
+        if (event.getParticipantLimit() == 0) {
+            participationRequest.setStatus(Status.CONFIRMED);
+        } else {
+            participationRequest.setStatus(Status.PENDING);
+        }
         participationRequest.setRequester(user);
         participationRequest.setEvent(event);
         return participationRequest;

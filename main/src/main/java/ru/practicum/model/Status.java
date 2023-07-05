@@ -3,7 +3,7 @@ package ru.practicum.model;
 public enum Status {
     PENDING,
     REJECTED,
-    APPROVE;
+    CONFIRMED;
 
     public static Status statusFromString(String value) {
         for (Status status : Status.values()) {
