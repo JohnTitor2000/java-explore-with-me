@@ -17,10 +17,14 @@ public interface ParticipationRequestRepository extends JpaRepository<Participat
             "and (pr.status = 'CONFIRMED') ")
     Integer getConfirmedRequestsByEventId(@Param("id") Long id);
 
+    @Query("select count(pr) from ParticipationRequest pr " +
+            "where (pr.event.id = :id) ")
+    Integer getRequestsByEventId(@Param("id") Long id);
+
     @Query("select pr from ParticipationRequest pr " +
             "where (pr.event.id = :eventId) " +
-            "and (pr.requester.id = :userId) ")
-    ParticipationRequest getRequestByUserIdAndEventId(@Param("userId") Long userId,
+            "and (pr.event.initiator.id = :userId) ")
+    List<ParticipationRequest> getRequestByUserIdAndEventId(@Param("userId") Long userId,
                                                       @Param("eventId") Long eventId);
 
     @Query("select pr from ParticipationRequest pr " +

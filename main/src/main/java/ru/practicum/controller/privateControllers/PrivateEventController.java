@@ -12,6 +12,7 @@ import ru.practicum.dto.event.InputNewEventDto;
 import ru.practicum.dto.event.InputUpdateEventFromUserDto;
 import ru.practicum.dto.request.ConfirmRequestDto;
 import ru.practicum.dto.request.RequestOutputDto;
+import ru.practicum.dto.request.RequestResultUpdateDto;
 import ru.practicum.service.EventService;
 
 import javax.validation.Valid;
@@ -51,12 +52,12 @@ public class PrivateEventController {
     }
 
     @GetMapping("/{eventId}/requests")
-    public RequestOutputDto getRequestsByUserId(@PathVariable Long userId, @PathVariable Long eventId) {
+    public List<RequestOutputDto> getRequestsByUserId(@PathVariable Long userId, @PathVariable Long eventId) {
         return eventService.getRequestByUserId(userId, eventId);
     }
 
     @PatchMapping("/{eventId}/requests")
-    public List<RequestOutputDto> updateRequests(@PathVariable Long userId, @PathVariable Long eventId, @RequestBody ConfirmRequestDto confirmRequestDto) {
+    public RequestResultUpdateDto updateRequests(@PathVariable Long userId, @PathVariable Long eventId, @RequestBody ConfirmRequestDto confirmRequestDto) {
         return eventService.updateRequests(userId, eventId, confirmRequestDto);
     }
 }

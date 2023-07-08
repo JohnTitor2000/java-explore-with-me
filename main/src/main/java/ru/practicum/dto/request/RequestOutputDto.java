@@ -1,5 +1,6 @@
 package ru.practicum.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -11,9 +12,10 @@ import java.time.LocalDateTime;
 @Setter
 public class RequestOutputDto {
     Long id;
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    LocalDateTime created;
-    Long event;
     Long requester;
+    Long event;
     Status status;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    LocalDateTime created;
 }

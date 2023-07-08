@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.dto.event.*;
 import ru.practicum.dto.request.ConfirmRequestDto;
 import ru.practicum.dto.request.RequestOutputDto;
+import ru.practicum.dto.request.RequestResultUpdateDto;
 import ru.practicum.exception.BadRequestException;
 import ru.practicum.exception.ConflictExeption;
 import ru.practicum.exception.NotFoundException;
@@ -18,6 +19,8 @@ import ru.practicum.repository.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -223,23 +226,55 @@ public class EventService {
     }
 
 
-    public RequestOutputDto getRequestByUserId(Long userId, Long eventId) {
-        ParticipationRequest pr = participationRequestRepository.getRequestByUserIdAndEventId(userId, eventId);
-        return RequestMapper.toRequestOutputDto(pr);
+    public List<RequestOutputDto> getRequestByUserId(Long userId, Long eventId) {
+        List<ParticipationRequest> pr = participationRequestRepository.getRequestByUserIdAndEventId(userId, eventId);
+        if (pr == null) {
+            throw new NotFoundException("request not found");
+        }
+        return pr.stream().map(RequestMapper::toRequestOutputDto).collect(Collectors.toList());
     }
 
-    public List<RequestOutputDto> updateRequests(Long userId, Long eventId, ConfirmRequestDto confirmRequestDto) {
+    public RequestResultUpdateDto updateRequests(Long userId, Long eventId, ConfirmRequestDto confirmRequestDto) {
         if (!eventRepository.existsById(eventId) || !eventRepository.findById(eventId).get().getInitiator().getId().equals(userId)) {
             throw new NotFoundException("Event with id=" + eventId + " was not found");
         }
         List<ParticipationRequest> prs = participationRequestRepository.getRequestsByRequestIds(confirmRequestDto.getRequestIds());
+        Event event = eventRepository.findById(eventId).get();
+        Integer freePlaces = event.getParticipantLimit() - participationRequestRepository.getConfirmedRequestsByEventId(eventId);
+        if (freePlaces <= 0) {
+            throw new ConflictExeption("Have not free places");
+        }
         for (ParticipationRequest pr : prs) {
             if (!pr.getStatus().equals(Status.PENDING)) {
-                throw  new BadRequestException("Request must have status PENDING");
+                throw  new ConflictExeption("Request must have status PENDING");
             }
         }
-        prs.forEach(o -> o.setStatus(Status.statusFromString(confirmRequestDto.getStatus())));
-        prs.stream().forEach(participationRequestRepository::save);
-        return prs.stream().map(RequestMapper::toRequestOutputDto).collect(Collectors.toList());
+        List<ParticipationRequest> confirmedRequests = new ArrayList<>();
+        List<ParticipationRequest> rejectedRequests = new ArrayList<>();
+        if (confirmRequestDto.getStatus().equals("CONFIRMED")) {
+            for (int i = 0; i < prs.size(); i++) {
+                if(i >= freePlaces) {
+                    prs.get(i).setStatus(Status.REJECTED);
+                    rejectedRequests.add(prs.get(i));
+                } else {
+                    prs.get(i).setStatus(Status.CONFIRMED);
+                    confirmedRequests.add(prs.get(i));
+                }
+            }
+            confirmedRequests.forEach(participationRequestRepository::save);
+            rejectedRequests.forEach(participationRequestRepository::save);
+            RequestResultUpdateDto result = new RequestResultUpdateDto();
+            result.setConfirmedRequests(confirmedRequests.stream().map(RequestMapper::toRequestOutputDto).collect(Collectors.toList()));
+            result.setRejectedRequests(rejectedRequests.stream().map(RequestMapper::toRequestOutputDto).collect(Collectors.toList()));
+            return result;
+        } else {
+            prs.forEach(o -> o.setStatus(Status.REJECTED));
+            prs.forEach(participationRequestRepository::save);
+            rejectedRequests.addAll(prs);
+            RequestResultUpdateDto result = new RequestResultUpdateDto();
+            result.setRejectedRequests(rejectedRequests.stream().map(RequestMapper::toRequestOutputDto).collect(Collectors.toList()));
+            result.setConfirmedRequests(Collections.emptyList());
+            return result;
+        }
     }
 }

@@ -23,13 +23,13 @@ public class RequestController {
     }
 
     @GetMapping
-    @ResponseStatus(HttpStatus.ACCEPTED)
+    @ResponseStatus(HttpStatus.OK)
     public List<RequestOutputDto> getRequests(@PathVariable Long userId) {
         return requestService.getRequests(userId);
     }
 
     @PatchMapping("/{requestId}/cancel")
-    @ResponseStatus(HttpStatus.ACCEPTED)
+    @ResponseStatus(HttpStatus.OK)
     public RequestOutputDto cancelRequest(@PathVariable Long userId, @PathVariable Long requestId) {
         return requestService.cancelRequest(userId, requestId);
     }
