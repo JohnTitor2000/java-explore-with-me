@@ -1,14 +1,13 @@
 package ru.practicum.mappers;
 
 import lombok.experimental.UtilityClass;
-import ru.practicum.dto.RequestOutputDto;
+import ru.practicum.dto.request.RequestOutputDto;
 import ru.practicum.model.Event;
 import ru.practicum.model.ParticipationRequest;
 import ru.practicum.model.Status;
 import ru.practicum.model.User;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 @UtilityClass
 public class RequestMapper {

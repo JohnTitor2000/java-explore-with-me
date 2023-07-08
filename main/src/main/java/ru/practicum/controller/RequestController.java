@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.dto.RequestOutputDto;
+import ru.practicum.dto.request.RequestOutputDto;
 import ru.practicum.service.RequestService;
 
 import java.util.List;

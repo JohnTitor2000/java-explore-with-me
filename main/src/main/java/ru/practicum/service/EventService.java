@@ -5,7 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import ru.practicum.dto.*;
+import ru.practicum.dto.event.*;
+import ru.practicum.dto.request.ConfirmRequestDto;
+import ru.practicum.dto.request.RequestOutputDto;
 import ru.practicum.exception.BadRequestException;
 import ru.practicum.exception.ConflictExeption;
 import ru.practicum.exception.NotFoundException;
@@ -33,8 +35,8 @@ public class EventService {
     private LocationRepository locationRepository;
 
     public List<EventDataDto> getEvents(String text, List<Long> categories, Boolean paid, LocalDateTime rangeStart,
-                                 LocalDateTime rangeEnd, Boolean onlyAvailable, String sort, Integer from,
-                                 Integer size, HttpServletRequest httpServletRequest) {
+                                        LocalDateTime rangeEnd, Boolean onlyAvailable, String sort, Integer from,
+                                        Integer size, HttpServletRequest httpServletRequest) {
         if (rangeStart != null && rangeEnd != null) {
             if (rangeStart.isAfter(rangeEnd) || rangeEnd.isBefore(LocalDateTime.now())) {
                 throw new BadRequestException("Начало и окончание события должны быть в правильном хронологическом порядке.");
@@ -56,8 +58,9 @@ public class EventService {
         events = events.stream().skip(resultFrom).limit(size).collect(Collectors.toList());
         for (Event event : events) {
             statisticService.addHit(EventMapper.toUri(event), "ewm-main-service", httpServletRequest);
+            event.setConfirmedRequest(participationRequestRepository.getConfirmedRequestsByEventId(event.getId()));
         }
-        return events.stream().map(o -> EventMapper.toEventDataDto(o, participationRequestRepository.getConfirmedRequestsByEventId(o.getId()))).collect(Collectors.toList());
+        return events.stream().map(EventMapper :: toEventDataDto).collect(Collectors.toList());
     }
 
     public FullEventDto getEventById(Long id, HttpServletRequest httpServletRequest) {
@@ -67,16 +70,23 @@ public class EventService {
         }
         statisticService.setStatistic(event);
         statisticService.addHit(EventMapper.toUri(event), "ewm-main-service", httpServletRequest);
-        return EventMapper.toFullEventDto(event, participationRequestRepository.getConfirmedRequestsByEventId(id));
+        event.setConfirmedRequest(participationRequestRepository.getConfirmedRequestsByEventId(event.getId()));
+        return EventMapper.toFullEventDto(event);
     }
 
     public List<FullEventDto> getEventsByUserId(List<Long> usersIds, List<String> states, List<Long> categories,
                                           LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from, Integer size) {
         Pageable pageable = PageRequest.of(from / size, size);
-        List<State> statesResult = states.stream().map(State::stateFromString).collect(Collectors.toList());
+        List<State> statesResult;
+        if (states != null) {
+            statesResult = states.stream().map(State::stateFromString).collect(Collectors.toList());
+        } else {
+            statesResult = null;
+        }
         List<Event> events = eventRepository.getEventsByUserId(usersIds, statesResult, categories, rangeStart, rangeEnd, pageable);
         statisticService.setStatistic(events);
-        return events.stream().map(o -> EventMapper.toFullEventDto(o, participationRequestRepository.getConfirmedRequestsByEventId(o.getId()))).collect(Collectors.toList());
+        events.stream().forEach(o -> o.setConfirmedRequest(participationRequestRepository.getConfirmedRequestsByEventId(o.getId())));
+        return events.stream().map(EventMapper :: toFullEventDto).collect(Collectors.toList());
     }
 
     public FullEventDto updateEvent(InputUpdateEventDto event, Long eventId) {
@@ -125,7 +135,8 @@ public class EventService {
         if (event.getPaid() != null) {
             modifiedEvent.setPaid(event.getPaid());
         }
-        return EventMapper.toFullEventDto(eventRepository.save(modifiedEvent), participationRequestRepository.getConfirmedRequestsByEventId(eventId));
+        modifiedEvent.setConfirmedRequest(participationRequestRepository.getConfirmedRequestsByEventId(modifiedEvent.getId()));
+        return EventMapper.toFullEventDto(eventRepository.save(modifiedEvent));
     }
 
     public List<EventDataDto> getEventsByUser(Long userId, Integer from, Integer size) {
@@ -135,10 +146,11 @@ public class EventService {
         Pageable pageable = PageRequest.of(from / size, size);
         List<Event> events = eventRepository.findByInitiatorId(userId, pageable);
         statisticService.setStatistic(events);
-        return events.stream().map(o -> EventMapper.toEventDataDto(o, participationRequestRepository.getConfirmedRequestsByEventId(o.getId()))).collect(Collectors.toList());
+        events.stream().forEach(o -> o.setConfirmedRequest(participationRequestRepository.getConfirmedRequestsByEventId(o.getId())));
+        return events.stream().map(EventMapper :: toEventDataDto).collect(Collectors.toList());
     }
 
-    public EventDataDto createEvent(Long userId, InputNewEventDto inputNewEventDto) {
+    public FullEventDto createEvent(Long userId, InputNewEventDto inputNewEventDto) {
         if (inputNewEventDto.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
             throw new BadRequestException("дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента.");
         }
@@ -147,7 +159,8 @@ public class EventService {
         locationRepository.save(event.getLocation());
         Event createdEvent = eventRepository.save(event);
         event.setViews(0L);
-        return EventMapper.toEventDataDto(createdEvent, participationRequestRepository.getConfirmedRequestsByEventId(createdEvent.getId()));
+        event.setConfirmedRequest(0);
+        return EventMapper.toFullEventDto(createdEvent);
     }
 
     public FullEventDto getFullEvent(Long userId, Long eventId) {
@@ -156,7 +169,8 @@ public class EventService {
         }
         Event event = eventRepository.findById(eventId).get();
         statisticService.setStatistic(event);
-        return EventMapper.toFullEventDto(event, participationRequestRepository.getConfirmedRequestsByEventId(eventId));
+        event.setConfirmedRequest(participationRequestRepository.getConfirmedRequestsByEventId(event.getId()));
+        return EventMapper.toFullEventDto(event);
     }
 
     public FullEventDto updateEventByUser(Long userId, Long eventId, InputUpdateEventFromUserDto inputUpdateEventFromUserDto) {
@@ -172,8 +186,8 @@ public class EventService {
                 throw new BadRequestException("Дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента");
             }
         }
-        if (inputUpdateEventFromUserDto.getStateAction().equals("SEND_TO_REVIEW")) modifiedEvent.setState(State.PENDING);
-        if (inputUpdateEventFromUserDto.getStateAction().equals("CANCEL_REVIEW")) modifiedEvent.setState(State.CANCELED);
+        if (inputUpdateEventFromUserDto.getStateAction() != null && inputUpdateEventFromUserDto.getStateAction().equals("SEND_TO_REVIEW")) modifiedEvent.setState(State.PENDING);
+        if (inputUpdateEventFromUserDto.getStateAction() != null && inputUpdateEventFromUserDto.getStateAction().equals("CANCEL_REVIEW")) modifiedEvent.setState(State.CANCELED);
         if (inputUpdateEventFromUserDto.getTitle() != null) modifiedEvent.setTitle(inputUpdateEventFromUserDto.getTitle());
         if (inputUpdateEventFromUserDto.getAnnotation() != null) modifiedEvent.setAnnotation(inputUpdateEventFromUserDto.getAnnotation());
         if (inputUpdateEventFromUserDto.getRequestModeration() != null) modifiedEvent.setRequestModeration(inputUpdateEventFromUserDto.getRequestModeration());
@@ -184,7 +198,8 @@ public class EventService {
         if (inputUpdateEventFromUserDto.getParticipantLimit() != null) modifiedEvent.setParticipantLimit(inputUpdateEventFromUserDto.getParticipantLimit());
         if (inputUpdateEventFromUserDto.getPaid() != null) modifiedEvent.setPaid(inputUpdateEventFromUserDto.getPaid());
         eventRepository.save(modifiedEvent);
-        return EventMapper.toFullEventDto(modifiedEvent, participationRequestRepository.getConfirmedRequestsByEventId(eventId));
+        modifiedEvent.setConfirmedRequest(participationRequestRepository.getConfirmedRequestsByEventId(modifiedEvent.getId()));
+        return EventMapper.toFullEventDto(modifiedEvent);
     }
 
 

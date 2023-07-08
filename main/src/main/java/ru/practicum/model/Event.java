@@ -7,6 +7,7 @@ import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import javax.transaction.Transactional;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
@@ -48,4 +49,6 @@ public class Event {
     private State state;
     @Transient
     private Long views;
+    @Transient
+    private Integer confirmedRequest;
 }

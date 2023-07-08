@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.dto.NewCategoryDto;
+import ru.practicum.dto.category.NewCategoryDto;
 import ru.practicum.model.Category;
 import ru.practicum.service.CategoryService;
 
@@ -37,7 +37,7 @@ public class CategoryController {
 
     @PostMapping("/admin/categories")
     @ResponseStatus(HttpStatus.CREATED)
-    public Category addCategory(@RequestBody @Valid NewCategoryDto newCategoryDto) {
+    public Category addCategory(@Valid @RequestBody NewCategoryDto newCategoryDto) {
         return categoryService.addCategory(newCategoryDto);
     }
 

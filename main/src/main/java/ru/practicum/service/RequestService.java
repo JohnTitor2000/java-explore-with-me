@@ -3,7 +3,7 @@ package ru.practicum.service;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.practicum.dto.RequestOutputDto;
+import ru.practicum.dto.request.RequestOutputDto;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.mappers.RequestMapper;
 import ru.practicum.model.ParticipationRequest;

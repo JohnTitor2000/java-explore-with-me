@@ -2,13 +2,11 @@ package ru.practicum.controller;
 
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.dto.EventDataDto;
-import ru.practicum.dto.FullEventDto;
-import ru.practicum.model.Event;
+import ru.practicum.dto.event.EventDataDto;
+import ru.practicum.dto.event.FullEventDto;
 import ru.practicum.service.EventService;
 
 import javax.servlet.http.HttpServletRequest;

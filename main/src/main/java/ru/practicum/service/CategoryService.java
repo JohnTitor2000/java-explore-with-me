@@ -3,7 +3,7 @@ package ru.practicum.service;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.practicum.dto.NewCategoryDto;
+import ru.practicum.dto.category.NewCategoryDto;
 import ru.practicum.exception.ConflictExeption;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.mappers.CategoryMapper;

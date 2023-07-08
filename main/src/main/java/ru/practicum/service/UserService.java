@@ -3,20 +3,14 @@ package ru.practicum.service;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.practicum.dto.RequestOutputDto;
-import ru.practicum.dto.ShortUser;
+import ru.practicum.dto.user.ShortUser;
 import ru.practicum.exception.NotFoundException;
-import ru.practicum.mappers.RequestMapper;
 import ru.practicum.mappers.UserMapper;
-import ru.practicum.model.ParticipationRequest;
-import ru.practicum.model.Status;
 import ru.practicum.model.User;
 import ru.practicum.repository.EventRepository;
 import ru.practicum.repository.ParticipationRequestRepository;
 import ru.practicum.repository.UserRepository;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,8 +34,8 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public List<User> getUserById(List<Long> ids, Integer size, Integer from) {
-        Integer resultFrom = size.equals(0) ? 0 : from - 1;
+    public List<User> getUsersById(List<Long> ids, Integer size, Integer from) {
+        Integer resultFrom = from.equals(0) ? 0 : from - 1;
         List<Long> resultIds = ids == null ? Collections.emptyList() : ids;
         if (resultIds.isEmpty()) {
             return userRepository.findAll().stream().skip(resultFrom).limit(size).collect(Collectors.toList());

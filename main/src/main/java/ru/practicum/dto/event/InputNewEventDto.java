@@ -1,35 +1,37 @@
-package ru.practicum.dto;
+package ru.practicum.dto.event;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
 import ru.practicum.model.Location;
 
-import javax.validation.constraints.PositiveOrZero;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@ToString
-public class InputUpdateEventDto {
-    @Size(min = 120, max = 2000)
+public class InputNewEventDto {
+    @NotBlank
+    @Size(min = 20, max = 2000)
     private String annotation;
-    @PositiveOrZero
+    @NotNull
     private Long category;
+    @NotBlank
     @Size(min = 20, max = 7000)
     private String description;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @NotNull
     private LocalDateTime eventDate;
+    @NotNull
     private Location location;
-    private Boolean paid;
+    @NotNull
+    private boolean paid = false;
     @PositiveOrZero
-    private Integer participantLimit;
-    private Boolean requestModeration;
-    private String stateAction;
+    private Integer participantLimit = 0;
+    private boolean requestModeration = true;
+    @NotBlank
     @Size(min = 3, max = 120)
     private String title;
 }

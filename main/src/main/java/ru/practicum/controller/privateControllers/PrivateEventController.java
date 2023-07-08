@@ -6,7 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.dto.*;
+import ru.practicum.dto.event.EventDataDto;
+import ru.practicum.dto.event.FullEventDto;
+import ru.practicum.dto.event.InputNewEventDto;
+import ru.practicum.dto.event.InputUpdateEventFromUserDto;
+import ru.practicum.dto.request.ConfirmRequestDto;
+import ru.practicum.dto.request.RequestOutputDto;
 import ru.practicum.service.EventService;
 
 import javax.validation.Valid;
@@ -31,7 +36,7 @@ public class PrivateEventController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public EventDataDto createEvent(@PathVariable @PositiveOrZero Long userId, @Valid @RequestBody InputNewEventDto inputNewEventDto) {
+    public FullEventDto createEvent(@PathVariable @PositiveOrZero Long userId, @Valid @RequestBody InputNewEventDto inputNewEventDto) {
         return eventService.createEvent(userId, inputNewEventDto);
     }
 
@@ -41,7 +46,7 @@ public class PrivateEventController {
     }
 
     @PatchMapping("/{eventId}")
-    public FullEventDto getUpdateEvent(@PathVariable Long userId, @PathVariable Long eventId, @RequestBody InputUpdateEventFromUserDto inputUpdateEventFromUserDto) {
+    public FullEventDto updateEvent(@PathVariable Long userId, @PathVariable Long eventId, @Valid @RequestBody InputUpdateEventFromUserDto inputUpdateEventFromUserDto) {
         return eventService.updateEventByUser(userId, eventId, inputUpdateEventFromUserDto);
     }
 

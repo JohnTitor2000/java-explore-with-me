@@ -1,16 +1,15 @@
 package ru.practicum.mappers;
 
 import lombok.experimental.UtilityClass;
-import ru.practicum.dto.EventDataDto;
-import ru.practicum.dto.FullEventDto;
-import ru.practicum.dto.InputNewEventDto;
+import ru.practicum.dto.event.EventDataDto;
+import ru.practicum.dto.event.FullEventDto;
+import ru.practicum.dto.event.InputNewEventDto;
 import ru.practicum.model.Category;
 import ru.practicum.model.Event;
 import ru.practicum.model.State;
 import ru.practicum.model.User;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @UtilityClass
 public class EventMapper {
@@ -20,7 +19,7 @@ public class EventMapper {
         return uri;
     }
 
-    public EventDataDto toEventDataDto(Event event, Integer confirmedRequest) {
+    public EventDataDto toEventDataDto(Event event) {
         EventDataDto eventDataDto = new EventDataDto();
         eventDataDto.setTitle(event.getTitle());
         eventDataDto.setId(event.getId());
@@ -30,11 +29,11 @@ public class EventMapper {
         eventDataDto.setViews(event.getViews());
         eventDataDto.setInitiator(event.getInitiator());
         eventDataDto.setPaid(event.getPaid());
-        eventDataDto.setConfirmedRequests(confirmedRequest);
+        eventDataDto.setConfirmedRequests(event.getConfirmedRequest());
         return eventDataDto;
     }
 
-    public FullEventDto toFullEventDto(Event event, Integer confirmedRequests) {
+    public FullEventDto toFullEventDto(Event event) {
         FullEventDto fullEventDto = new FullEventDto();
         fullEventDto.setId(event.getId());
         fullEventDto.setTitle(event.getTitle());
@@ -50,7 +49,7 @@ public class EventMapper {
         fullEventDto.setRequestModeration(event.getRequestModeration());
         fullEventDto.setState(event.getState());
         fullEventDto.setViews(event.getViews());
-        fullEventDto.setConfirmedRequests(confirmedRequests);
+        fullEventDto.setConfirmedRequests(event.getConfirmedRequest());
         fullEventDto.setLocation(event.getLocation());
         return fullEventDto;
     }
