@@ -2,13 +2,11 @@ package ru.prakticum.client;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import ru.practicum.dto.HitDto;
 import ru.practicum.dto.StatisticDto;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public class StatClient {
