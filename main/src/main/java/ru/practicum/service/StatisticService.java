@@ -34,7 +34,7 @@ public class StatisticService {
         for (StatisticDto statisticDto : statisticsDto) {
             Long id = Long.parseLong(String.valueOf(statisticDto.getUri().charAt(statisticDto.getUri().length() - 1)));
             for (Event event : events) {
-                if(Objects.equals(event.getId(), id)) {
+                if (Objects.equals(event.getId(), id)) {
                     event.setViews(statisticDto.getHits());
                 }
             }

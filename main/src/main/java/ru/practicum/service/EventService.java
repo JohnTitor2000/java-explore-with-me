@@ -253,7 +253,7 @@ public class EventService {
         List<ParticipationRequest> rejectedRequests = new ArrayList<>();
         if (confirmRequestDto.getStatus().equals("CONFIRMED")) {
             for (int i = 0; i < prs.size(); i++) {
-                if(i >= freePlaces) {
+                if (i >= freePlaces) {
                     prs.get(i).setStatus(Status.REJECTED);
                     rejectedRequests.add(prs.get(i));
                 } else {
