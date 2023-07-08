@@ -29,6 +29,7 @@ services:
    container_name: main_container
    depends_on:
      - ewm-db
+     - stats-db
    environment:
      - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/ewm
 
