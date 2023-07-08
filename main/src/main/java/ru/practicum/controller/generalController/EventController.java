@@ -1,4 +1,4 @@
-package ru.practicum.controller;
+package ru.practicum.controller.generalController;
 
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,6 +1,5 @@
 package ru.practicum.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.dto.HitDto;
 import ru.practicum.dto.StatisticDto;
@@ -25,7 +24,7 @@ public class StatisticService {
         List<String> uris = events.stream().map(EventMapper::toUri).collect(Collectors.toList());
         LocalDateTime now = LocalDateTime.now();
         List<StatisticDto> statisticsDto = statClient.getStatistic(LocalDateTime.now().minusYears(2).format(dtFormatter), now.format(dtFormatter), uris, true);
-        for(StatisticDto statisticDto : statisticsDto) {
+        for (StatisticDto statisticDto : statisticsDto) {
             Long id = Long.parseLong(String.valueOf(statisticDto.getUri().charAt(statisticDto.getUri().length() - 1)));
             events.stream().filter(o -> o.getId().equals(id)).findFirst().get().setViews(statisticDto.getHits());
         }
@@ -35,7 +34,7 @@ public class StatisticService {
         String uris = EventMapper.toUri(event);
         LocalDateTime now = LocalDateTime.now();
         List<StatisticDto> statisticsDto = statClient.getStatistic(LocalDateTime.now().minusYears(2).format(dtFormatter), now.format(dtFormatter), Collections.singletonList(uris), true);
-        if(statisticsDto.isEmpty()) {
+        if (statisticsDto.isEmpty()) {
             event.setViews(0L);
         } else {
             event.setViews(statisticsDto.get(0).getHits());

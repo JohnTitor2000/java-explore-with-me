@@ -35,7 +35,7 @@ public class GlobalExceptionHandler {
         errorResponse.setMessage(ex.getMessage());
         errorResponse.setTimestamp(LocalDateTime.now());
 
-        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT );
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(ConflictExeption.class)
@@ -46,7 +46,7 @@ public class GlobalExceptionHandler {
         errorResponse.setMessage(ex.getMessage());
         errorResponse.setTimestamp(LocalDateTime.now());
 
-        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT );
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(NotFoundException.class)
@@ -57,7 +57,7 @@ public class GlobalExceptionHandler {
         errorResponse.setMessage(ex.getMessage());
         errorResponse.setTimestamp(LocalDateTime.now());
 
-        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND );
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(BadRequestException.class)

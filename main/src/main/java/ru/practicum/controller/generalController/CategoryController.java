@@ -1,4 +1,4 @@
-package ru.practicum.controller;
+package ru.practicum.controller.generalController;
 
 
 import lombok.AllArgsConstructor;

@@ -60,7 +60,7 @@ public class EventService {
             statisticService.addHit(EventMapper.toUri(event), "ewm-main-service", httpServletRequest);
             event.setConfirmedRequest(participationRequestRepository.getConfirmedRequestsByEventId(event.getId()));
         }
-        return events.stream().map(EventMapper :: toEventDataDto).collect(Collectors.toList());
+        return events.stream().map(EventMapper::toEventDataDto).collect(Collectors.toList());
     }
 
     public FullEventDto getEventById(Long id, HttpServletRequest httpServletRequest) {
@@ -85,8 +85,8 @@ public class EventService {
         }
         List<Event> events = eventRepository.getEventsByUserId(usersIds, statesResult, categories, rangeStart, rangeEnd, pageable);
         statisticService.setStatistic(events);
-        events.stream().forEach(o -> o.setConfirmedRequest(participationRequestRepository.getConfirmedRequestsByEventId(o.getId())));
-        return events.stream().map(EventMapper :: toFullEventDto).collect(Collectors.toList());
+        events.forEach(o -> o.setConfirmedRequest(participationRequestRepository.getConfirmedRequestsByEventId(o.getId())));
+        return events.stream().map(EventMapper::toFullEventDto).collect(Collectors.toList());
     }
 
     public FullEventDto updateEvent(InputUpdateEventDto event, Long eventId) {
@@ -117,8 +117,8 @@ public class EventService {
         }
 
         if (event.getCategory() != null) {
-            modifiedEvent.setCategory(categoryRepository.findById(event.getCategory()).
-                orElseThrow(() -> new NotFoundException("category with id=" + event.getCategory() + " not found")));
+            modifiedEvent.setCategory(categoryRepository.findById(event.getCategory())
+                            .orElseThrow(() -> new NotFoundException("category with id=" + event.getCategory() + " not found")));
         }
         if (event.getDescription() != null) {
             modifiedEvent.setDescription(event.getDescription());
@@ -147,7 +147,7 @@ public class EventService {
         List<Event> events = eventRepository.findByInitiatorId(userId, pageable);
         statisticService.setStatistic(events);
         events.stream().forEach(o -> o.setConfirmedRequest(participationRequestRepository.getConfirmedRequestsByEventId(o.getId())));
-        return events.stream().map(EventMapper :: toEventDataDto).collect(Collectors.toList());
+        return events.stream().map(EventMapper::toEventDataDto).collect(Collectors.toList());
     }
 
     public FullEventDto createEvent(Long userId, InputNewEventDto inputNewEventDto) {
@@ -186,17 +186,37 @@ public class EventService {
                 throw new BadRequestException("Дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента");
             }
         }
-        if (inputUpdateEventFromUserDto.getStateAction() != null && inputUpdateEventFromUserDto.getStateAction().equals("SEND_TO_REVIEW")) modifiedEvent.setState(State.PENDING);
-        if (inputUpdateEventFromUserDto.getStateAction() != null && inputUpdateEventFromUserDto.getStateAction().equals("CANCEL_REVIEW")) modifiedEvent.setState(State.CANCELED);
-        if (inputUpdateEventFromUserDto.getTitle() != null) modifiedEvent.setTitle(inputUpdateEventFromUserDto.getTitle());
-        if (inputUpdateEventFromUserDto.getAnnotation() != null) modifiedEvent.setAnnotation(inputUpdateEventFromUserDto.getAnnotation());
-        if (inputUpdateEventFromUserDto.getRequestModeration() != null) modifiedEvent.setRequestModeration(inputUpdateEventFromUserDto.getRequestModeration());
-        if (inputUpdateEventFromUserDto.getCategory() != null) modifiedEvent.setCategory(categoryRepository.findById(inputUpdateEventFromUserDto.getCategory()).
-                orElseThrow(() -> new NotFoundException("category with id=" + inputUpdateEventFromUserDto.getCategory() + " not found")));
-        if (inputUpdateEventFromUserDto.getDescription() != null && !inputUpdateEventFromUserDto.getDescription().isBlank()) modifiedEvent.setDescription(inputUpdateEventFromUserDto.getDescription());
-        if (inputUpdateEventFromUserDto.getLocation() != null) modifiedEvent.setLocation(inputUpdateEventFromUserDto.getLocation());
-        if (inputUpdateEventFromUserDto.getParticipantLimit() != null) modifiedEvent.setParticipantLimit(inputUpdateEventFromUserDto.getParticipantLimit());
-        if (inputUpdateEventFromUserDto.getPaid() != null) modifiedEvent.setPaid(inputUpdateEventFromUserDto.getPaid());
+        if (inputUpdateEventFromUserDto.getStateAction() != null && inputUpdateEventFromUserDto.getStateAction().equals("SEND_TO_REVIEW")) {
+            modifiedEvent.setState(State.PENDING);
+        }
+        if (inputUpdateEventFromUserDto.getStateAction() != null && inputUpdateEventFromUserDto.getStateAction().equals("CANCEL_REVIEW")) {
+            modifiedEvent.setState(State.CANCELED);
+        }
+        if (inputUpdateEventFromUserDto.getTitle() != null) {
+            modifiedEvent.setTitle(inputUpdateEventFromUserDto.getTitle());
+        }
+        if (inputUpdateEventFromUserDto.getAnnotation() != null) {
+            modifiedEvent.setAnnotation(inputUpdateEventFromUserDto.getAnnotation());
+        }
+        if (inputUpdateEventFromUserDto.getRequestModeration() != null) {
+            modifiedEvent.setRequestModeration(inputUpdateEventFromUserDto.getRequestModeration());
+        }
+        if (inputUpdateEventFromUserDto.getCategory() != null) {
+            modifiedEvent.setCategory(categoryRepository.findById(inputUpdateEventFromUserDto.getCategory())
+                    .orElseThrow(() -> new NotFoundException("category with id=" + inputUpdateEventFromUserDto.getCategory() + " not found")));
+        }
+        if (inputUpdateEventFromUserDto.getDescription() != null && !inputUpdateEventFromUserDto.getDescription().isBlank()) {
+            modifiedEvent.setDescription(inputUpdateEventFromUserDto.getDescription());
+        }
+        if (inputUpdateEventFromUserDto.getLocation() != null) {
+            modifiedEvent.setLocation(inputUpdateEventFromUserDto.getLocation());
+        }
+        if (inputUpdateEventFromUserDto.getParticipantLimit() != null) {
+            modifiedEvent.setParticipantLimit(inputUpdateEventFromUserDto.getParticipantLimit());
+        }
+        if (inputUpdateEventFromUserDto.getPaid() != null) {
+            modifiedEvent.setPaid(inputUpdateEventFromUserDto.getPaid());
+        }
         eventRepository.save(modifiedEvent);
         modifiedEvent.setConfirmedRequest(participationRequestRepository.getConfirmedRequestsByEventId(modifiedEvent.getId()));
         return EventMapper.toFullEventDto(modifiedEvent);

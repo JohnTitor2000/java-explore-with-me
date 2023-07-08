@@ -10,7 +10,6 @@ import ru.practicum.dto.compilation.NewCompilationDto;
 import ru.practicum.dto.compilation.UpdateCompilationDto;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.mappers.CompilationMapper;
-import ru.practicum.mappers.EventMapper;
 import ru.practicum.model.Compilation;
 import ru.practicum.model.Event;
 import ru.practicum.repository.CompilationRepository;
@@ -52,7 +51,7 @@ public class CompilationService {
 
     @Transactional
     public void remove(Long compId) {
-        if(!compilationRepository.existsById(compId)) {
+        if (!compilationRepository.existsById(compId)) {
             throw new NotFoundException("Compilation with id=" + compId + " was not found");
         }
         compilationRepository.deleteById(compId);
