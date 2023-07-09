@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.dto.HitDto;
 import ru.practicum.dto.StatisticDto;
 import ru.practicum.server.dtoMapper.DtoMapper;
+import ru.practicum.server.exception.BadRequestException;
 import ru.practicum.server.model.Hit;
 import ru.practicum.server.repository.StatisticRepository;
 
@@ -35,12 +36,18 @@ public class StatisticService {
     }
 
     public List<StatisticDto> getStatistic(String start, String end, List<String> uris, Boolean unique) {
-        List<String> resultUri = uris == null ? Collections.emptyList() : uris;
-        if (unique) {
-            return statisticRepository.getStatisticUnique(LocalDateTime.parse(start, DateTimeFormatter.ofPattern(FORMAT)),
-                LocalDateTime.parse(end, DateTimeFormatter.ofPattern(FORMAT)), resultUri, resultUri.isEmpty());
+        if (start == null || end == null) {
+            throw new BadRequestException("Cant without start or end");
         }
-        return statisticRepository.getStatisticNotUnique(LocalDateTime.parse(start, DateTimeFormatter.ofPattern(FORMAT)),
-                LocalDateTime.parse(end, DateTimeFormatter.ofPattern(FORMAT)), resultUri, resultUri.isEmpty());
+        List<String> resultUri = uris == null ? Collections.emptyList() : uris;
+        LocalDateTime endTime = LocalDateTime.parse(end, DateTimeFormatter.ofPattern(FORMAT));
+        LocalDateTime startTime = LocalDateTime.parse(start, DateTimeFormatter.ofPattern(FORMAT));
+        if (startTime.isAfter(endTime)) {
+            throw new BadRequestException("Start cant be after end");
+        }
+        if (unique) {
+            return statisticRepository.getStatisticUnique(startTime, endTime, resultUri, resultUri.isEmpty());
+        }
+        return statisticRepository.getStatisticNotUnique(startTime, endTime, resultUri, resultUri.isEmpty());
     }
 }

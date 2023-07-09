@@ -52,9 +52,9 @@ public class StatisticService {
         }
     }
 
-    void addHit(String uri, String app, HttpServletRequest httpServletRequest) {
+    void addHit(String uri, HttpServletRequest httpServletRequest) {
         LocalDateTime now = LocalDateTime.now();
-        HitDto hitDto = new HitDto(app, uri, httpServletRequest.getRemoteAddr(), now.format(dtFormatter));
+        HitDto hitDto = new HitDto("ewm-main-service", uri, httpServletRequest.getRemoteAddr(), now.format(dtFormatter));
         statClient.addHit(hitDto);
     }
 }

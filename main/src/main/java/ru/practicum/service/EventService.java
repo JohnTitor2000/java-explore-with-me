@@ -59,8 +59,8 @@ public class EventService {
         }
         int resultFrom = from.equals(0) ? 0 : from - 1;
         events = events.stream().skip(resultFrom).limit(size).collect(Collectors.toList());
+        statisticService.addHit("/events", httpServletRequest);
         for (Event event : events) {
-            statisticService.addHit(EventMapper.toUri(event), "ewm-main-service", httpServletRequest);
             event.setConfirmedRequest(participationRequestRepository.getConfirmedRequestsByEventId(event.getId()));
         }
         return events.stream().map(EventMapper::toEventDataDto).collect(Collectors.toList());
@@ -72,7 +72,7 @@ public class EventService {
             throw new NotFoundException("Event with id=" + id + " was not found");
         }
         statisticService.setStatistic(event);
-        statisticService.addHit(EventMapper.toUri(event), "ewm-main-service", httpServletRequest);
+        statisticService.addHit(EventMapper.toUri(event), httpServletRequest);
         event.setConfirmedRequest(participationRequestRepository.getConfirmedRequestsByEventId(event.getId()));
         return EventMapper.toFullEventDto(event);
     }
