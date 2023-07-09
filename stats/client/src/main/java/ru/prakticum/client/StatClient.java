@@ -11,7 +11,7 @@ import java.util.List;
 
 public class StatClient {
 
-    private static final String BASE_URL = "http://localhost:9090";
+    private static final String BASE_URL = "http://stats-server:9090";
 
     WebClient webClient = WebClient.builder()
             .baseUrl(BASE_URL)
