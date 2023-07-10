@@ -26,10 +26,10 @@ import java.util.stream.Collectors;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class CompilationService {
 
-    CompilationRepository compilationRepository;
-    EventRepository eventRepository;
-    ParticipationRequestRepository participationRequestRepository;
-    StatisticService statisticService;
+    private final CompilationRepository compilationRepository;
+    private final EventRepository eventRepository;
+    private final ParticipationRequestRepository participationRequestRepository;
+    private final StatisticService statisticService;
 
     @Transactional
     public CompilationDto add(NewCompilationDto newCompilationDto) {

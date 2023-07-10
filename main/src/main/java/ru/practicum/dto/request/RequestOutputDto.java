@@ -11,11 +11,11 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class RequestOutputDto {
-    Long id;
-    Long requester;
-    Long event;
-    Status status;
+    private Long id;
+    private Long requester;
+    private Long event;
+    private Status status;
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    LocalDateTime created;
+    private LocalDateTime created;
 }

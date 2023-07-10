@@ -8,6 +8,6 @@ import java.util.List;
 @Getter
 @Setter
 public class ConfirmRequestDto {
-    List<Long> requestIds;
-    String status;
+    private List<Long> requestIds;
+    private String status;
 }

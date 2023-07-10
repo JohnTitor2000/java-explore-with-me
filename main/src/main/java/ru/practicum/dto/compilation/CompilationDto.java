@@ -9,8 +9,8 @@ import java.util.Set;
 @Getter
 @Setter
 public class CompilationDto {
-    Set<FullEventDto> events;
-    Long id;
-    Boolean pinned;
-    String title;
+    private Set<FullEventDto> events;
+    private Long id;
+    private Boolean pinned;
+    private String title;
 }

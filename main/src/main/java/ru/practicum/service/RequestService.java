@@ -22,9 +22,9 @@ import java.util.stream.Collectors;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class RequestService {
 
-    ParticipationRequestRepository prRepository;
-    EventRepository eventRepository;
-    UserRepository userRepository;
+    private final ParticipationRequestRepository prRepository;
+    private final EventRepository eventRepository;
+    private final UserRepository userRepository;
 
     public RequestOutputDto addRequest(Long userId, Long eventId) {
         if (!userRepository.existsById(userId)) {

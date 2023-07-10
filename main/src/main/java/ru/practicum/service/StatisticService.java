@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class StatisticService {
 
     private final StatClient statClient = new StatClient();
-    DateTimeFormatter dtFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private final DateTimeFormatter dtFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     void setStatistic(List<Event> events) {
         if (events.isEmpty()) {

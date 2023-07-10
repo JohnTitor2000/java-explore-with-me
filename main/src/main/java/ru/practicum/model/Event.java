@@ -33,7 +33,7 @@ public class Event {
     private LocalDateTime eventDate;
     @OneToOne
     @JoinColumn(name = "location_id")
-    Location location;
+    private Location location;
     @ManyToOne
     @JoinColumn(name = "initiator_id")
     private User initiator;

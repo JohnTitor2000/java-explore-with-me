@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class PublicCompilationController {
 
-    CompilationService compilationService;
+    private CompilationService compilationService;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)

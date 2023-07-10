@@ -35,7 +35,7 @@ public class EventService {
     private final StatisticService statisticService;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
-    private LocationRepository locationRepository;
+    private final LocationRepository locationRepository;
 
     public List<EventDataDto> getEvents(String text, List<Long> categories, Boolean paid, LocalDateTime rangeStart,
                                         LocalDateTime rangeEnd, Boolean onlyAvailable, String sort, Integer from,

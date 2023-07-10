@@ -7,8 +7,6 @@ import ru.practicum.dto.user.ShortUser;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.mappers.UserMapper;
 import ru.practicum.model.User;
-import ru.practicum.repository.EventRepository;
-import ru.practicum.repository.ParticipationRequestRepository;
 import ru.practicum.repository.UserRepository;
 
 import java.util.Collections;
@@ -20,8 +18,6 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final ParticipationRequestRepository prRepository;
-    private final EventRepository eventRepository;
 
     public User addUser(ShortUser shortUser) {
         return userRepository.save(UserMapper.toUser(shortUser));

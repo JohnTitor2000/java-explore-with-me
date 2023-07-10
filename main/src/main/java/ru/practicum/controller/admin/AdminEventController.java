@@ -21,7 +21,7 @@ import java.util.List;
 @Validated
 public class AdminEventController {
 
-    EventService eventService;
+    private EventService eventService;
 
     @GetMapping
     public List<FullEventDto> getEventsById(@RequestParam(value = "users", required = false) List<Long> users,

@@ -21,7 +21,7 @@ import static ru.practicum.dto.Constants.FORMAT;
 @Slf4j
 @Service
 public class StatisticService {
-    StatisticRepository statisticRepository;
+    private final StatisticRepository statisticRepository;
 
     @Autowired
     public StatisticService(StatisticRepository statisticRepository) {

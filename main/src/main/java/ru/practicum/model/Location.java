@@ -16,7 +16,7 @@ import javax.persistence.*;
 public class Location {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
-    float lat;
-    float lon;
+    private Long id;
+    private float lat;
+    private float lon;
 }

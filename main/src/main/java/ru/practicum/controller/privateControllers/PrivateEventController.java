@@ -26,7 +26,7 @@ import java.util.List;
 @Validated
 public class PrivateEventController {
 
-    EventService eventService;
+    private EventService eventService;
 
     @GetMapping
     public List<EventDataDto> getEventsByUserId(@PathVariable Long userId,

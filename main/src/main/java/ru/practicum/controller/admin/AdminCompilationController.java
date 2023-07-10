@@ -19,7 +19,7 @@ import javax.validation.constraints.PositiveOrZero;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class AdminCompilationController {
 
-    CompilationService compilationService;
+    private CompilationService compilationService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

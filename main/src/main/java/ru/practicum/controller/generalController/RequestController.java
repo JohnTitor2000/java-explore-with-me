@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class RequestController {
 
-    RequestService requestService;
+    private RequestService requestService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

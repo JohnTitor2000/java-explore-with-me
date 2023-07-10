@@ -20,7 +20,7 @@ import java.util.List;
 @RequestMapping("/events")
 public class EventController {
 
-    EventService eventService;
+    private EventService eventService;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
