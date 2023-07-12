@@ -1,51 +1,46 @@
-package ru.practicum.client;
+package ru.prakticum.client;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.stereotype.Service;
-import org.springframework.web.util.DefaultUriBuilderFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 import ru.practicum.dto.HitDto;
-import ru.prakticum.client.BaseClient;
+import ru.practicum.dto.StatisticDto;
 
 import java.util.List;
-import java.util.Map;
 
-import static ru.practicum.dto.Constants.HIT_URI;
-import static ru.practicum.dto.Constants.STATS_URI;
+public class StatClient {
 
-@Service
-public class StatClient extends BaseClient {
-    @Autowired
-    public StatClient(@Value("${stats-server.url}") String serverUrl, RestTemplateBuilder builder) {
-        super(
-                builder.uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
-                        .requestFactory(HttpComponentsClientHttpRequestFactory::new)
-                        .build()
-        );
+    private static final String BASE_URL = "http://stats-server:9090";
+
+    WebClient webClient = WebClient.builder()
+            .baseUrl(BASE_URL)
+            .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+            .build();
+
+    public void addHit(HitDto hitDto) {
+        Mono<String> postResponse = webClient
+                .post()
+                .uri("/hit")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(hitDto)
+                .retrieve()
+                .bodyToMono(String.class);
+        String postResponseBody = postResponse.block();
     }
 
-    public ResponseEntity<Object> addHit(HitDto hitDto) {
-        return post(HIT_URI, hitDto);
-    }
-
-    public ResponseEntity<Object> getStatistic(String start, String end, List<String> uris, Boolean unique) {
-        if (unique != null) {
-            Map<String, Object> params = Map.of(
-                    "start", start,
-                    "end", end,
-                    "uris", uris,
-                    "unique", unique
-            );
-            return get(STATS_URI + "?start={start}&end={end}&uris={uris}&unique={unique}", params);
-        }
-        Map<String, Object> params = Map.of(
-                "start",start,
-                "end", end,
-                "uris", uris
-        );
-        return get(STATS_URI + "?start={start}&end={end}&uris={uris}", params);
+    public List<StatisticDto> getStatistic(String start, String end, List<String> uris, boolean unique) {
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/stats") // Замените "/stats" на фактический путь к вашему контроллеру
+                        .queryParam("start", start) // Установите фактические значения параметров start, end, uris и unique
+                        .queryParam("end", end)
+                        .queryParam("uris", uris.toArray())
+                        .queryParam("unique", unique)
+                        .build())
+                .retrieve()
+                .bodyToFlux(StatisticDto.class)
+                .collectList()
+                .block();
     }
 }

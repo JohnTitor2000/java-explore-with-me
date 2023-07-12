@@ -21,7 +21,7 @@ import static ru.practicum.dto.Constants.STATS_URI;
 @RestController
 public class StatisticController {
 
-    StatisticService statisticService;
+    private final StatisticService statisticService;
 
     @Autowired
     public StatisticController(StatisticService statisticService) {
