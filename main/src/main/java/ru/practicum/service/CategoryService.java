@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.dto.category.NewCategoryDto;
-import ru.practicum.exception.ConflictExeption;
+import ru.practicum.exception.ConflictException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.mappers.CategoryMapper;
 import ru.practicum.model.Category;
@@ -39,7 +39,7 @@ public class CategoryService {
             throw new NotFoundException("Category with id=" + id + " was not found");
         }
         if (eventRepository.countEventsWithCategory(id) > 0) {
-            throw new ConflictExeption("The category is not empty");
+            throw new ConflictException("The category is not empty");
         }
 
         categoryRepository.deleteById(id);

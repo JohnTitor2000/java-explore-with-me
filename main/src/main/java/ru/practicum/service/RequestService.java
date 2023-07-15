@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.dto.request.RequestOutputDto;
-import ru.practicum.exception.ConflictExeption;
+import ru.practicum.exception.ConflictException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.mappers.RequestMapper;
 import ru.practicum.model.Event;
@@ -32,13 +32,13 @@ public class RequestService {
         }
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
         if (event.getInitiator().getId().equals(userId)) {
-            throw new ConflictExeption("Initiator cant send request to his own event");
+            throw new ConflictException("Initiator cant send request to his own event");
         }
         if (!event.getState().equals(State.PUBLISHED)) {
-            throw new ConflictExeption("Event with id=" + eventId + " was not found");
+            throw new ConflictException("Event with id=" + eventId + " was not found");
         }
         if (event.getParticipantLimit() > 0 && prRepository.getConfirmedRequestsByEventId(eventId) >= event.getParticipantLimit()) {
-            throw new ConflictExeption("Have not free places");
+            throw new ConflictException("Have not free places");
         }
         ParticipationRequest participationRequest = prRepository.save(RequestMapper.toParticipationRequest(userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User with id=" + userId + " was not found")), event));
         return RequestMapper.toRequestOutputDto(participationRequest);

@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.dto.comment.CommentDto;
 import ru.practicum.dto.event.EventDataDto;
 import ru.practicum.dto.event.FullEventDto;
 import ru.practicum.service.EventService;
@@ -42,5 +43,10 @@ public class EventController {
         return eventService.getEventById(id, httpServletRequest);
     }
 
-
+    @GetMapping("/comments/{eventId}")
+    public List<CommentDto> getCommentsByEventId(@PositiveOrZero @PathVariable Long eventId,
+                                                 @RequestParam(defaultValue = "0") Integer from,
+                                                 @RequestParam(defaultValue = "10") Integer size) {
+        return eventService.getAllCommentsByEvent(eventId, from, size);
+    }
 }
