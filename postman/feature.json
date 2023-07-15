@@ -7,65 +7,6 @@
 	},
 	"item": [
 		{
-			"name": "conflict",
-			"item": [
-				{
-					"name": "Добавление нового комментария для не опубликованного события",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Ответ должен содержать код статуса 404 и данные в формате json\", function () {",
-									"    pm.response.to.have.status(404);",
-									"    pm.response.to.be.withBody;",
-									"    pm.response.to.be.json;",
-									"});",
-									"",
-									"const target = pm.response.json();",
-									"",
-									"pm.test(\"Ошибка должна содержать поля: status\", function () {",
-									"    pm.expect(target).to.have.property('status');",
-									"});",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"content\": \"Test comment\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:8080/users/1/events/2/comments",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"users",
-								"1",
-								"events",
-								"2",
-								"comments"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
 			"name": "not found",
 			"item": [
 				{
@@ -151,7 +92,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"eventId\": 1,\n    \"text\": \"Test comment\"\n}",
+							"raw": "{\n    \"content\": \"Test comment\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -159,16 +100,18 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/comments/user/99",
+							"raw": "http://localhost:8080/users/1999/events/1/comment",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
-								"comments",
-								"user",
-								"99"
+								"users",
+								"1999",
+								"events",
+								"1",
+								"comment"
 							]
 						}
 					},
@@ -203,7 +146,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"eventId\": 1,\n    \"text\": \"Update comment\"\n}",
+							"raw": "{\n    \"content\": \"Update comment\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -211,17 +154,18 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/comments/1/user/199",
+							"raw": "http://localhost:8080/users/1000/events/comments/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
+								"users",
+								"1000",
+								"events",
 								"comments",
-								"1",
-								"user",
-								"199"
+								"1"
 							]
 						}
 					},
@@ -256,7 +200,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"eventId\": 1,\n    \"text\": \"Test comment\"\n}",
+							"raw": "{\n    \"content\": \"Test comment\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -264,16 +208,18 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/comments/user/99",
+							"raw": "http://localhost:8080/users/1/events/10000/comments",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
-								"comments",
-								"user",
-								"99"
+								"users",
+								"1",
+								"events",
+								"10000",
+								"comments"
 							]
 						}
 					},
@@ -316,15 +262,18 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/comments/199",
+							"raw": "http://localhost:8080/users/1/events/comments/10000",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
+								"users",
+								"1",
+								"events",
 								"comments",
-								"199"
+								"10000"
 							]
 						}
 					},
@@ -408,7 +357,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"event_id\": 1,\n    \"text\": \"\"\n}",
+							"raw": "{\n    \"content\": \"\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -416,16 +365,17 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/comments/1/user/1",
+							"raw": "http://localhost:8080/users/1/events/comments/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
-								"comments",
+								"users",
 								"1",
-								"user",
+								"events",
+								"comments",
 								"1"
 							]
 						}
@@ -461,7 +411,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"eventId\": 1,\n    \"text\": \"\"\n}",
+							"raw": "{\n    \"content\": \"\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -469,16 +419,18 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/comments/user/1",
+							"raw": "http://localhost:8080/users/1/events/1/comments",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
-								"comments",
-								"user",
-								"1"
+								"users",
+								"1",
+								"events",
+								"1",
+								"comments"
 							]
 						}
 					},
@@ -505,19 +457,16 @@
 									"const source = JSON.parse(pm.request.body.raw);",
 									"const target = pm.response.json();",
 									"",
-									"pm.test(\"Пользователь должен содержать поля: id, created, updated, text, event_id, user_id\", function () {",
+									"pm.test(\"Пользователь должен содержать поля: id, created, content, authorName\", function () {",
 									"pm.expect(target).to.have.property('id');",
 									"pm.expect(target).to.have.property('created');",
-									"pm.expect(target).to.have.property('updated');",
-									"pm.expect(target).to.have.property('text');",
-									"pm.expect(target).to.have.property('eventId');",
-									"pm.expect(target).to.have.property('userId');",
+									"pm.expect(target).to.have.property('content');",
+									"pm.expect(target).to.have.property('authorName');",
 									"});",
 									"",
 									"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {",
 									"    pm.expect(target.id).to.not.be.null;",
-									"    pm.expect(source.text).equal(target.text, 'Текст комментария должен соответствовать отправленному в запросе');",
-									"    pm.expect(source.eventId).equal(target.eventId, 'Евент ИД должен соответствовать отправленному в запросе');",
+									"    pm.expect(source.content).equal(target.content, 'Текст комментария должен соответствовать отправленному в запросе');",
 									"});"
 								],
 								"type": "text/javascript"
@@ -529,7 +478,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"eventId\": 1,\n    \"text\": \"Test comment\"\n}",
+							"raw": "{\n    \"content\": \"Test comment\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -537,16 +486,18 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/comments/user/1",
+							"raw": "http://localhost:8080/users/1/events/1/comments",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
-								"comments",
-								"user",
-								"1"
+								"users",
+								"1",
+								"events",
+								"1",
+								"comments"
 							]
 						}
 					},
@@ -568,19 +519,16 @@
 									"const source = JSON.parse(pm.request.body.raw);",
 									"const target = pm.response.json();",
 									"",
-									"pm.test(\"Пользователь должен содержать поля: id, created, updated, text, event_id, user_id\", function () {",
+									"pm.test(\"Пользователь должен содержать поля: id, content, authorName, created\", function () {",
 									"pm.expect(target).to.have.property('id');",
+									"pm.expect(target).to.have.property('content');",
+									"pm.expect(target).to.have.property('authorName');",
 									"pm.expect(target).to.have.property('created');",
-									"pm.expect(target).to.have.property('updated');",
-									"pm.expect(target).to.have.property('text');",
-									"pm.expect(target).to.have.property('eventId');",
-									"pm.expect(target).to.have.property('userId');",
 									"});",
 									"",
 									"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {",
 									"    pm.expect(target.id).to.not.be.null;",
-									"    pm.expect(source.text).equal(target.text, 'Текст комментария должен соответствовать отправленному в запросе');",
-									"    pm.expect(source.eventId).equal(target.eventId, 'Евент ИД должен соответствовать отправленному в запросе');",
+									"    pm.expect(source.content).equal(target.content, 'Текст комментария должен соответствовать отправленному в запросе');",
 									"});"
 								],
 								"type": "text/javascript"
@@ -592,7 +540,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"eventId\": 1,\n    \"text\": \"Test comment 2\"\n}",
+							"raw": "{\n    \"content\": \"Test comment 2\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -600,16 +548,18 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/comments/user/1",
+							"raw": "http://localhost:8080/users/1/events/1/comments",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
-								"comments",
-								"user",
-								"1"
+								"users",
+								"1",
+								"events",
+								"1",
+								"comments"
 							]
 						}
 					},
@@ -631,18 +581,16 @@
 									"const source = JSON.parse(pm.request.body.raw);",
 									"const target = pm.response.json();",
 									"",
-									"pm.test(\"Пользователь должен содержать поля: id, created, updated, text, event_id, user_id\", function () {",
+									"pm.test(\"Пользователь должен содержать поля: id, content, authorName, created.\", function () {",
 									"pm.expect(target).to.have.property('id');",
+									"pm.expect(target).to.have.property('content');",
+									"pm.expect(target).to.have.property('authorName');",
 									"pm.expect(target).to.have.property('created');",
-									"pm.expect(target).to.have.property('updated');",
-									"pm.expect(target).to.have.property('text');",
-									"pm.expect(target).to.have.property('eventId');",
-									"pm.expect(target).to.have.property('userId');",
 									"});",
 									"",
 									"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {",
 									"    pm.expect(target.id).to.not.be.null;",
-									"    pm.expect(source.text).equal(target.text, 'Текст комментария должен соответствовать отправленному в запросе');",
+									"    pm.expect(source.content).equal(target.content, 'Текст комментария должен соответствовать отправленному в запросе');",
 									"});"
 								],
 								"type": "text/javascript"
@@ -654,7 +602,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"text\": \"Update comment\"\n}",
+							"raw": "{\n    \"content\": \"Update comment\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -662,16 +610,17 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/comments/1/user/1",
+							"raw": "http://localhost:8080/users/1/events/comments/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
-								"comments",
+								"users",
 								"1",
-								"user",
+								"events",
+								"comments",
 								"1"
 							]
 						}
@@ -693,17 +642,15 @@
 									"",
 									"const target = pm.response.json();",
 									"",
-									"pm.test(\"Комментарий должен содержать поля: id, created, updated, text, event_id, user_id\", function () {",
+									"pm.test(\"Комментарий должен содержать поля: id, content, authorName, created.\", function () {",
 									"pm.expect(target).to.have.property('id');",
+									"pm.expect(target).to.have.property('content');",
+									"pm.expect(target).to.have.property('authorName');",
 									"pm.expect(target).to.have.property('created');",
-									"pm.expect(target).to.have.property('updated');",
-									"pm.expect(target).to.have.property('text');",
-									"pm.expect(target).to.have.property('eventId');",
-									"pm.expect(target).to.have.property('userId');",
 									"});",
 									"",
 									"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {",
-									"    pm.expect(target['text']).equal('Update comment');",
+									"    pm.expect(target['content']).equal('Update comment');",
 									"});"
 								],
 								"type": "text/javascript"
@@ -714,15 +661,16 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/comments/admin/1",
+							"raw": "http://localhost:8080/admin/events/comments/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
-								"comments",
 								"admin",
+								"events",
+								"comments",
 								"1"
 							]
 						}
@@ -730,7 +678,7 @@
 					"response": []
 				},
 				{
-					"name": "Получения комментария пользователем по ИД",
+					"name": "Получения комментария gj",
 					"event": [
 						{
 							"listen": "test",
@@ -745,13 +693,15 @@
 									"const source = pm.collectionVariables.get('response');",
 									"const target = pm.response.json();",
 									"",
-									"pm.test(\"Комментарий должен содержать поля: id, created, updated, text, event_id, user_id\", function () {",
+									"pm.test(\"Комментарий должен содержать поля: id, content, authorName, created.\", function () {",
 									"pm.expect(target[0]).to.have.property('id');",
+									"pm.expect(target[0]).to.have.property('content');",
+									"pm.expect(target[0]).to.have.property('authorName');",
 									"pm.expect(target[0]).to.have.property('created');",
-									"pm.expect(target[0]).to.have.property('updated');",
-									"pm.expect(target[0]).to.have.property('text');",
-									"pm.expect(target[0]).to.have.property('eventId');",
-									"pm.expect(target[0]).to.have.property('userId');",
+									"pm.expect(target[1]).to.have.property('id');",
+									"pm.expect(target[1]).to.have.property('content');",
+									"pm.expect(target[1]).to.have.property('authorName');",
+									"pm.expect(target[1]).to.have.property('created');",
 									"});",
 									"",
 									"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {",
@@ -766,7 +716,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/comments/admin/user/1",
+							"raw": "http://localhost:8080/comments/admin/users/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -775,7 +725,7 @@
 							"path": [
 								"comments",
 								"admin",
-								"user",
+								"users",
 								"1"
 							]
 						}
@@ -798,17 +748,15 @@
 									"const source = pm.collectionVariables.get('response');",
 									"const target = pm.response.json();",
 									"",
-									"pm.test(\"Комментарий должен содержать поля: id, created, updated, text, event_id, user_id\", function () {",
+									"pm.test(\"Комментарий должен содержать поля: id, content, authorName, created\", function () {",
 									"pm.expect(target[0]).to.have.property('id');",
+									"pm.expect(target[0]).to.have.property('content');",
+									"pm.expect(target[0]).to.have.property('authorName');",
 									"pm.expect(target[0]).to.have.property('created');",
-									"pm.expect(target[0]).to.have.property('updated');",
-									"pm.expect(target[0]).to.have.property('text');",
-									"pm.expect(target[0]).to.have.property('eventId');",
-									"pm.expect(target[0]).to.have.property('userId');",
-									"});",
-									"",
-									"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {",
-									"    pm.expect(target.id).to.not.be.null;",
+									"pm.expect(target[1]).to.have.property('id');",
+									"pm.expect(target[1]).to.have.property('content');",
+									"pm.expect(target[1]).to.have.property('authorName');",
+									"pm.expect(target[1]).to.have.property('created');",
 									"});"
 								],
 								"type": "text/javascript"
@@ -819,26 +767,16 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/comments/events/1?from=0&size=10",
+							"raw": "http://localhost:8080/events/comments/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
-								"comments",
 								"events",
+								"comments",
 								"1"
-							],
-							"query": [
-								{
-									"key": "from",
-									"value": "0"
-								},
-								{
-									"key": "size",
-									"value": "10"
-								}
 							]
 						}
 					},
@@ -872,15 +810,16 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/comments/admin/1",
+							"raw": "http://localhost:8080/admin/events/comments/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
-								"comments",
 								"admin",
+								"events",
+								"comments",
 								"1"
 							]
 						}
@@ -915,17 +854,18 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/comments/2/user/1",
+							"raw": "http://localhost:8080/users/1/events/comments/2",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
+								"users",
+								"1",
+								"events",
 								"comments",
-								"2",
-								"user",
-								"1"
+								"2"
 							]
 						}
 					},
