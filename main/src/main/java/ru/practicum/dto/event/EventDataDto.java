@@ -4,12 +4,10 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
-import ru.practicum.dto.comment.CommentDto;
 import ru.practicum.model.Category;
 import ru.practicum.model.User;
 
 import java.time.LocalDateTime;
-import java.util.Set;
 
 @Getter
 @Setter

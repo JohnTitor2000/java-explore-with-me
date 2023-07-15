@@ -7,8 +7,6 @@ import ru.practicum.model.Comment;
 import ru.practicum.model.Event;
 import ru.practicum.model.User;
 
-import java.time.LocalDateTime;
-
 @UtilityClass
 public class CommentMapper {
 
