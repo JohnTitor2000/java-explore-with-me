@@ -16,8 +16,8 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Ответ должен содержать код статуса 409 и данные в формате json\", function () {",
-									"    pm.response.to.have.status(409);",
+									"pm.test(\"Ответ должен содержать код статуса 404 и данные в формате json\", function () {",
+									"    pm.response.to.have.status(404);",
 									"    pm.response.to.be.withBody;",
 									"    pm.response.to.be.json;",
 									"});",
@@ -38,7 +38,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"eventId\": 2,\n    \"text\": \"Test comment\"\n}",
+							"raw": "{\n    \"content\": \"Test comment\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -46,16 +46,18 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/comments/user/1",
+							"raw": "http://localhost:8080/users/1/events/2/comments",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
-								"comments",
-								"user",
-								"1"
+								"users",
+								"1",
+								"events",
+								"2",
+								"comments"
 							]
 						}
 					},
@@ -95,7 +97,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"eventId\": 1,\n    \"text\": \"Update comment\"\n}",
+							"raw": "{\n    \"content\": \"Update comment\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -103,17 +105,18 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/comments/199/user/1",
+							"raw": "http://localhost:8080/users/1/events/comments/199",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
+								"users",
+								"1",
+								"events",
 								"comments",
-								"199",
-								"user",
-								"1"
+								"199"
 							]
 						}
 					},
