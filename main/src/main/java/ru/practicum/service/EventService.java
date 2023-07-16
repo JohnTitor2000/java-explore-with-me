@@ -5,13 +5,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import ru.practicum.dto.comment.CommentDto;
+import ru.practicum.dto.comment.NewCommentDto;
+import ru.practicum.dto.comment.UpdateCommentDto;
 import ru.practicum.dto.event.*;
 import ru.practicum.dto.request.ConfirmRequestDto;
 import ru.practicum.dto.request.RequestOutputDto;
 import ru.practicum.dto.request.RequestResultUpdateDto;
 import ru.practicum.exception.BadRequestException;
-import ru.practicum.exception.ConflictExeption;
+import ru.practicum.exception.ConflictException;
 import ru.practicum.exception.NotFoundException;
+import ru.practicum.mappers.CommentMapper;
 import ru.practicum.mappers.EventMapper;
 import ru.practicum.mappers.RequestMapper;
 import ru.practicum.model.*;
@@ -19,10 +23,7 @@ import ru.practicum.repository.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,6 +37,65 @@ public class EventService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final LocationRepository locationRepository;
+
+    private final CommentRepository commentRepository;
+
+    public CommentDto addComment(Long eventId, Long userId, NewCommentDto newCommentDto) {
+        if (newCommentDto.getContent().isBlank()) {
+            throw new BadRequestException("Comment cant be empty.");
+        }
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException("Event not found"));
+        if (!event.getState().equals(State.PUBLISHED)) {
+            throw new ConflictException("Нельзя комментировать неопубликованное событие.");
+        }
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found."));
+        Comment comment = commentRepository.save(CommentMapper.toComment(newCommentDto, user, event));
+        return CommentMapper.toCommentDto(comment);
+    }
+
+    public List<CommentDto> getAllCommentsByUser(Long userId, Integer from, Integer size) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User with id=" + userId + " not found"));
+        Pageable pageable = PageRequest.of(from / size, size);
+        return commentRepository.findAllByAuthor(user, pageable).stream().map(CommentMapper::toCommentDto).collect(Collectors.toList());
+    }
+
+    public List<CommentDto> getAllCommentsByEvent(Long eventId, Integer from, Integer size) {
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " not found"));
+        if (!event.getState().equals(State.PUBLISHED)) {
+            throw new ConflictException("Event is not available now");
+        }
+        Pageable pageable = PageRequest.of(from / size, size);
+        return commentRepository.findAllByEvent(event, pageable).stream().map(CommentMapper::toCommentDto).collect(Collectors.toList());
+    }
+
+    public void removeCommentByOwner(Long commentId, Long userId) {
+        if (!commentRepository.findById(commentId).orElseThrow(()
+                -> new NotFoundException("Comment with id=" + commentId + " not found"))
+                .getAuthor().getId().equals(userId)) {
+            throw new NotFoundException("You cant delete this comment.");
+        }
+        commentRepository.deleteById(commentId);
+    }
+
+    public CommentDto getCommentById(Long commentId) {
+        return CommentMapper.toCommentDto(commentRepository.findById(commentId).orElseThrow(() -> new NotFoundException("Comment not found.")));
+    }
+
+    public CommentDto updateCommentByOwner(UpdateCommentDto comment, Long userId, Long commentId) {
+        Comment modifiedComment = commentRepository.findById(commentId).orElseThrow(() -> new NotFoundException("Comment not found"));
+        if (!Objects.equals(modifiedComment.getAuthor().getId(), userId)) {
+            throw new NotFoundException("You cant modify this comment");
+        }
+        if (modifiedComment.getCreated().isAfter(LocalDateTime.now().plusHours(1))) {
+            throw new ConflictException("Редактирование комментария доступно только в течение часа после создания");
+        }
+        modifiedComment.setContent(comment.getContent());
+        return CommentMapper.toCommentDto(commentRepository.save(modifiedComment));
+    }
+
+    public void deleteCommentByAdmin(Long commentId) {
+        commentRepository.deleteById(commentId);
+    }
 
     public List<EventDataDto> getEvents(String text, List<Long> categories, Boolean paid, LocalDateTime rangeStart,
                                         LocalDateTime rangeEnd, Boolean onlyAvailable, String sort, Integer from,
@@ -96,7 +156,7 @@ public class EventService {
         Event modifiedEvent = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
         if (event.getStateAction() != null && event.getStateAction().equals("PUBLISH_EVENT")) {
             if (modifiedEvent.getState() != State.PENDING) {
-                throw new ConflictExeption("Не возможно опубликовать событие с ИД: " + eventId);
+                throw new ConflictException("Не возможно опубликовать событие с ИД: " + eventId);
             }
             LocalDateTime published = LocalDateTime.now();
             modifiedEvent.setPublishedOn(published);
@@ -105,7 +165,7 @@ public class EventService {
 
         if (event.getStateAction() != null && event.getStateAction().equals("REJECT_EVENT")) {
             if (modifiedEvent.getState() == State.PUBLISHED && modifiedEvent.getPublishedOn().isBefore(LocalDateTime.now())) {
-                throw new ConflictExeption("Не возможно опубликовать событие с ИД: " + eventId);
+                throw new ConflictException("Не возможно опубликовать событие с ИД: " + eventId);
             }
             modifiedEvent.setState(State.CANCELED);
         }
@@ -182,7 +242,7 @@ public class EventService {
             throw new NotFoundException("Event with id=" + eventId + " was not found");
         }
         if (modifiedEvent.getState().equals(State.PUBLISHED)) {
-            throw new ConflictExeption("Изменить можно только отмененные события или события в состоянии ожидания модерации");
+            throw new ConflictException("Изменить можно только отмененные события или события в состоянии ожидания модерации");
         }
         if (inputUpdateEventFromUserDto.getEventDate() != null) {
             if (inputUpdateEventFromUserDto.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
@@ -242,11 +302,11 @@ public class EventService {
         Event event = eventRepository.findById(eventId).get();
         Integer freePlaces = event.getParticipantLimit() - participationRequestRepository.getConfirmedRequestsByEventId(eventId);
         if (freePlaces <= 0) {
-            throw new ConflictExeption("Have not free places");
+            throw new ConflictException("Have not free places");
         }
         for (ParticipationRequest pr : prs) {
             if (!pr.getStatus().equals(Status.PENDING)) {
-                throw  new ConflictExeption("Request must have status PENDING");
+                throw  new ConflictException("Request must have status PENDING");
             }
         }
         List<ParticipationRequest> confirmedRequests = new ArrayList<>();

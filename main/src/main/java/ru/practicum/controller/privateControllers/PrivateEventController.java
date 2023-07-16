@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.dto.comment.CommentDto;
+import ru.practicum.dto.comment.NewCommentDto;
+import ru.practicum.dto.comment.UpdateCommentDto;
 import ru.practicum.dto.event.EventDataDto;
 import ru.practicum.dto.event.FullEventDto;
 import ru.practicum.dto.event.InputNewEventDto;
@@ -37,27 +40,57 @@ public class PrivateEventController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public FullEventDto createEvent(@PathVariable @PositiveOrZero Long userId, @Valid @RequestBody InputNewEventDto inputNewEventDto) {
+    public FullEventDto createEvent(@PositiveOrZero @PathVariable Long userId,
+                                    @Valid @RequestBody InputNewEventDto inputNewEventDto) {
         return eventService.createEvent(userId, inputNewEventDto);
     }
 
     @GetMapping("/{eventId}")
-    public FullEventDto getFullEvent(@PathVariable Long userId, @PathVariable Long eventId) {
+    public FullEventDto getFullEvent(@PositiveOrZero @PathVariable Long userId,
+                                     @PositiveOrZero @PathVariable Long eventId) {
         return eventService.getFullEvent(userId, eventId);
     }
 
     @PatchMapping("/{eventId}")
-    public FullEventDto updateEvent(@PathVariable Long userId, @PathVariable Long eventId, @Valid @RequestBody InputUpdateEventFromUserDto inputUpdateEventFromUserDto) {
+    public FullEventDto updateEvent(@PositiveOrZero @PathVariable Long userId,
+                                    @PositiveOrZero @PathVariable Long eventId,
+                                    @Valid @RequestBody InputUpdateEventFromUserDto inputUpdateEventFromUserDto) {
         return eventService.updateEventByUser(userId, eventId, inputUpdateEventFromUserDto);
     }
 
     @GetMapping("/{eventId}/requests")
-    public List<RequestOutputDto> getRequestsByUserId(@PathVariable Long userId, @PathVariable Long eventId) {
+    public List<RequestOutputDto> getRequestsByUserId(@PositiveOrZero @PathVariable Long userId,
+                                                      @PositiveOrZero @PathVariable Long eventId) {
         return eventService.getRequestByUserId(userId, eventId);
     }
 
     @PatchMapping("/{eventId}/requests")
-    public RequestResultUpdateDto updateRequests(@PathVariable Long userId, @PathVariable Long eventId, @RequestBody ConfirmRequestDto confirmRequestDto) {
+    public RequestResultUpdateDto updateRequests(@PositiveOrZero @PathVariable Long userId,
+                                                 @PositiveOrZero @PathVariable Long eventId,
+                                                 @RequestBody ConfirmRequestDto confirmRequestDto) {
         return eventService.updateRequests(userId, eventId, confirmRequestDto);
+    }
+
+    @PostMapping("/{eventId}/comments")
+    @ResponseStatus(HttpStatus.CREATED)
+    public CommentDto addComment(@Valid @RequestBody NewCommentDto newCommentDto,
+                                 @PositiveOrZero @PathVariable Long userId,
+                                 @PositiveOrZero @PathVariable Long eventId) {
+        return eventService.addComment(eventId, userId, newCommentDto);
+    }
+
+    @PatchMapping("/comments/{commentId}")
+    @ResponseStatus(HttpStatus.OK)
+    public CommentDto updateComment(@Valid @RequestBody UpdateCommentDto updateCommentDto,
+                                    @PositiveOrZero @PathVariable Long userId,
+                                    @PositiveOrZero @PathVariable Long commentId) {
+        return eventService.updateCommentByOwner(updateCommentDto, userId, commentId);
+    }
+
+    @DeleteMapping("/comments/{commentId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void removeComment(@PositiveOrZero @PathVariable Long userId,
+                              @PositiveOrZero @PathVariable Long commentId) {
+        eventService.removeCommentByOwner(commentId, userId);
     }
 }
