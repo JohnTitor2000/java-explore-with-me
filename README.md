@@ -1,5 +1,4 @@
 # java-explore-with-me
-Template repository for ExploreWithMe project.
 
 Описание проекта
 -
