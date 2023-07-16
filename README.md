@@ -8,8 +8,6 @@ Explore-With-Me - это веб-приложение, разработанное
 -
 
 - Java, Spring-Boot, Maven, Spring-Boot, Hibernate, PostgreSQL, Lombok, Docker, RestTemplate
-- Функционал приложения:
--
 
 1.  ### Проект реализован по микро-сервисной архитектуре:
     * main - реализация основной бизнес-логики
